@@ -1,0 +1,1236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WeTrials – Study Finder (Concept 2 — Paginated Featured)</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --teal:#54c8b4;--blue-dark:#003CA5;--blue-mid:#1d4ed8;--blue-light:#bfdbfe;
+  --gray-bg:#f0f2f5;--gray-border:#e5e7eb;--gray-text:#374151;--gray-muted:#6b7280;
+  --white:#fff;--black:#09090b;--radius:10px;--shadow:0 1px 3px rgba(0,0,0,.08);
+}
+body{font-family:'Noto Sans',system-ui,sans-serif;background:var(--gray-bg);color:var(--black);font-size:14px;min-height:100vh;margin:0}
+
+/* ANN BAR */
+.ann-bar{background:var(--teal);padding:7px 20px;display:flex;align-items:center;justify-content:center;gap:8px;font-size:13px;font-weight:500}
+.ann-bar a{background:#000033;color:#fff;padding:3px 10px;border-radius:4px;text-decoration:none;font-size:12px}
+.ann-bar .x{background:none;border:none;cursor:pointer;font-size:16px;margin-left:auto;line-height:1}
+
+/* HEADER */
+.header{background:#fff;border-bottom:1px solid var(--gray-border);display:flex;align-items:center;gap:14px;padding:10px 220px;box-sizing:border-box;width:100%}
+.sf-pill{display:flex;align-items:center;justify-content:space-between;gap:8px;background:#f5f5f5;border-radius:999px;padding:7px 14px;width:215px;flex-shrink:0;cursor:pointer;box-sizing:border-box}
+.sf-pill-l{display:flex;align-items:center;gap:8px}
+.sf-icon{background:#fff;border-radius:50%;width:30px;height:30px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sf-name{font-size:15px;font-weight:700}
+.search-wrap{flex:1;position:relative;margin-left:4px}
+.srch{width:100%;height:44px;border:1px solid var(--gray-border);border-radius:999px;padding:0 56px 0 40px;font-size:14px;font-family:inherit;outline:none;transition:border-color .2s,box-shadow .2s}
+.srch:focus{border-color:var(--blue-mid);box-shadow:0 0 0 3px rgba(29,78,216,.12)}
+.srch::placeholder{color:#b0b7c3}
+.srch-ico{position:absolute;left:13px;top:50%;transform:translateY(-50%);pointer-events:none}
+.srch-btn{position:absolute;right:5px;top:50%;transform:translateY(-50%);background:var(--blue-light);border:none;border-radius:50%;width:34px;height:34px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .15s}
+.srch-btn:hover{background:#93c5fd}
+
+/* LAYOUT */
+.layout{display:flex;align-items:flex-start;padding:16px 220px;gap:0;width:100%;box-sizing:border-box}
+
+/* FILTER PANEL */
+.fp{width:215px;flex-shrink:0;background:#fff;border:1px solid var(--gray-border);border-radius:var(--radius);padding:14px;position:sticky;top:14px;max-height:calc(100vh - 28px);overflow-y:auto}
+.fp::-webkit-scrollbar{width:4px}
+.fp::-webkit-scrollbar-thumb{background:#e5e7eb;border-radius:2px}
+.fp-hdr{display:flex;align-items:center;gap:6px;font-size:14px;font-weight:700;margin-bottom:14px}
+.fs{margin-bottom:12px}
+.fs-title{display:flex;align-items:center;justify-content:space-between;font-size:13px;font-weight:600;margin-bottom:6px}
+.fs-title span{display:flex;align-items:center;gap:4px}
+.chev{cursor:pointer;color:var(--gray-muted);font-size:13px;transition:transform .2s}
+.fi{width:100%;border:1px solid var(--gray-border);border-radius:8px;padding:7px 10px;font-size:13px;font-family:inherit;outline:none;transition:border-color .15s}
+.fi:focus{border-color:var(--blue-mid)}
+.fi::placeholder{color:#b0b7c3}
+.cl{display:flex;flex-direction:column;gap:4px}
+.cr{display:flex;align-items:center;gap:7px;font-size:13px;color:var(--gray-text);cursor:pointer}
+.cr input[type=checkbox],.cr input[type=radio]{
+  width:15px;height:15px;cursor:pointer;flex-shrink:0;
+  appearance:none;-webkit-appearance:none;
+  border:1.5px solid #d1d5db;border-radius:3px;background:#fff;
+  display:grid;place-content:center;transition:border-color .15s,background .15s;
+  margin:0;
+}
+.cr input[type=radio]{border-radius:50%}
+.cr input[type=checkbox]:checked,.cr input[type=radio]:checked{
+  background:var(--blue-mid);border-color:var(--blue-mid);
+}
+.cr input[type=checkbox]:checked::after{
+  content:'';width:4px;height:7px;
+  border:1.5px solid #fff;border-top:none;border-left:none;
+  transform:rotate(45deg) translateY(-1px);display:block;
+}
+.cr input[type=radio]:checked::after{
+  content:'';width:6px;height:6px;border-radius:50%;background:#fff;display:block;
+}
+.cr input[type=checkbox]:hover:not(:checked),.cr input[type=radio]:hover:not(:checked){
+  border-color:#9ca3af;
+}
+.hdiv{border:none;border-top:1px solid var(--gray-border);margin:10px 0}
+.fa{display:flex;gap:7px;margin-top:10px}
+.btn-c{flex:1;padding:8px;border:1px solid var(--gray-border);border-radius:8px;background:#fff;font-size:13px;font-weight:500;color:var(--gray-text);cursor:pointer;font-family:inherit}
+.btn-c:hover{background:#f9fafb}
+.btn-a{flex:1;padding:8px;border:none;border-radius:8px;background:var(--blue-light);font-size:13px;font-weight:700;color:var(--blue-mid);cursor:pointer;font-family:inherit}
+.btn-a:hover{background:#93c5fd}
+
+/* MAIN */
+.main{flex:1;min-width:0;padding-left:18px;width:100%}
+
+/* ── SESSION CHANGE DISPLAY ─────────────── */
+
+/* TOAST */
+.toast-wrap{position:fixed;top:18px;right:18px;z-index:9999;display:flex;flex-direction:column;gap:8px;pointer-events:none}
+.toast{background:#1e1b4b;color:#fff;border-radius:12px;padding:12px 14px;font-size:13px;display:flex;align-items:flex-start;gap:10px;min-width:280px;max-width:340px;box-shadow:0 8px 28px rgba(0,0,0,.28);animation:tIn .3s cubic-bezier(.34,1.56,.64,1) forwards;pointer-events:auto}
+.toast.out{animation:tOut .25s ease forwards}
+.toast-ico{width:28px;height:28px;background:rgba(167,139,250,.2);border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.toast-ico.green{background:rgba(110,231,183,.15)}
+.toast-body{flex:1}
+.toast-ttl{font-weight:700;font-size:12px;margin-bottom:2px;color:#c4b5fd}
+.toast-ttl.green-t{color:#6ee7b7}
+.toast-msg{font-size:11px;color:#d1d5db;line-height:1.45}
+.toast-x{background:none;border:none;color:#9ca3af;cursor:pointer;font-size:16px;line-height:1;padding:0;flex-shrink:0}
+@keyframes tIn{from{opacity:0;transform:translateX(36px) scale(.95)}to{opacity:1;transform:translateX(0) scale(1)}}
+@keyframes tOut{from{opacity:1;transform:translateX(0)}to{opacity:0;transform:translateX(36px)}}
+
+/* SESSION STATUS BAR */
+.sess-status{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:999px;font-size:12px;font-weight:600;transition:all .3s}
+.sess-status.reshuffled{background:#faf5ff;color:#7c3aed;border:1.5px solid #ddd6fe;animation:glow 1.4s ease 2}
+.sess-status.stable{background:#f0fdf4;color:#16a34a;border:1.5px solid #bbf7d0}
+@keyframes glow{0%,100%{box-shadow:0 0 0 0 rgba(124,58,237,0)}50%{box-shadow:0 0 0 6px rgba(124,58,237,.18)}}
+.sess-detail{font-size:12px;color:var(--gray-muted);flex:1}
+.sess-detail strong{color:var(--gray-text)}
+
+/* DOTS */
+.dots-row{display:flex;align-items:center;gap:4px;margin-bottom:8px;flex-wrap:wrap}
+.dot{width:11px;height:11px;border-radius:50%;transition:background .4s,transform .3s}
+.dot.on{background:linear-gradient(135deg,#9333ea,#1d4ed8);transform:scale(1.1)}
+.dot.off{background:#e5e7eb}
+.dots-lbl{font-size:11px;color:var(--gray-muted);margin-left:6px}
+.dots-lbl strong{color:var(--gray-text)}
+
+/* SESSION LOG */
+.log-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.log-title{font-size:12px;font-weight:700;color:var(--gray-text);display:flex;align-items:center;gap:5px}
+.log-clr{font-size:11px;color:var(--gray-muted);background:none;border:none;cursor:pointer;padding:0}
+.log-body{max-height:100px;overflow-y:auto}
+.log-body::-webkit-scrollbar{width:3px}
+.log-body::-webkit-scrollbar-thumb{background:#e5e7eb}
+.log-row{display:flex;align-items:flex-start;gap:6px;padding:3px 0;border-top:1px solid #f3f4f6;font-size:11px;color:var(--gray-muted)}
+.log-row:first-child{border-top:none}
+.log-t{color:#9ca3af;flex-shrink:0;min-width:44px}
+.log-d{width:7px;height:7px;border-radius:50%;margin-top:3px;flex-shrink:0}
+.log-d.r{background:#7c3aed}
+.log-d.s{background:#16a34a}
+.log-txt strong{color:var(--gray-text)}
+.lbadge{display:inline-block;padding:1px 5px;border-radius:3px;font-size:10px;font-weight:700}
+.lbr{background:#faf5ff;color:#7c3aed}
+.lbs{background:#f0fdf4;color:#16a34a}
+.lbx{background:#fef3c7;color:#b45309}
+.lbf{background:#ede9fe;color:#7c3aed}
+.log-d.x{background:#f59e0b}
+.toast-ttl.amber-t{color:#fbbf24}
+.toast-ico.amber{background:rgba(251,191,36,.15)}
+.sess-status.restored{background:#f0fdf4;color:#16a34a;border:1.5px solid #bbf7d0}
+.sess-status.expired{background:#fffbeb;color:#b45309;border:1.5px solid #fde68a;animation:glow-amber 1.4s ease 2}
+@keyframes glow-amber{0%,100%{box-shadow:0 0 0 0 rgba(245,158,11,0)}50%{box-shadow:0 0 0 6px rgba(245,158,11,.18)}}
+.sess-ctrl-label{color:#6b7280;font-weight:600}
+.sess-btn{padding:3px 10px;border-radius:6px;border:1px solid #d1d5db;background:#fff;font-size:11px;cursor:pointer;font-family:inherit;transition:background .15s}
+.sess-btn:hover{background:#f3f4f6}
+.sess-btn.danger{border-color:#fca5a5;color:#dc2626}
+.sess-btn.danger:hover{background:#fef2f2}
+.sess-btn.info{border-color:#93c5fd;color:#1d4ed8}
+.feat-toggle-wrap{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.feat-toggle-btn{display:flex;align-items:center;gap:7px;padding:7px 14px;border-radius:8px;border:1.5px solid #d1d5db;background:#fff;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;color:#374151;transition:all .15s}
+.feat-toggle-btn:hover{background:#f9fafb;border-color:#9ca3af}
+.feat-toggle-btn.active{background:#003CA5;border-color:#003CA5;color:#fff}
+.feat-toggle-btn .tog-dot{width:8px;height:8px;border-radius:50%;background:currentColor;opacity:.7}
+.sess-clock{font-size:11px;color:#6b7280;margin-left:auto}
+
+/* DEBUG BAR */
+
+/* RESULTS */
+.res-info{font-size:14px;color:var(--gray-text);margin-bottom:10px}
+.res-info strong{font-weight:600;color:var(--black)}
+
+/* CARDS — matched to Figma design */
+.card-list{display:flex;flex-direction:column;gap:12px}
+
+/* Normal card — plain grey border, no shadow */
+.card{background:#fff;border:1px solid #ededef;border-radius:10px;padding:18px 20px;cursor:pointer;position:relative;box-shadow:none;transition:border-color .15s,box-shadow .15s}
+.card.normal{border:1px solid #ededef !important;border-radius:8px !important}
+.card:hover{border-color:#d4d4d8;box-shadow:0 4px 16px rgba(0,0,0,.04)}
+
+/* Featured card — blue border + gradient badge */
+.card.featured-card{border:2px solid #0b49b5;border-radius:10px;padding:18px 20px;box-shadow:none}
+.card.featured-card:hover{border-color:#0b49b5;box-shadow:none}
+
+/* Featured badge */
+.fp-badge{position:absolute;top:12px;right:12px;display:inline-flex;align-items:center;gap:5px;padding:5px 10px;border-radius:8px;background:linear-gradient(90deg,#c20da7 0%,#0f49b7 100%);color:#fff;font-size:12px;font-weight:700;border:none}
+.fp-badge svg{width:13px;height:13px}
+.fp-badge svg path{fill:#fff!important}
+
+/* Badges row */
+.badges{display:flex;flex-wrap:wrap;gap:6px;padding-right:100px}
+.card.featured-card .badges{gap:8px;padding-right:108px;margin-bottom:12px}
+.badge{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:8px;font-size:12px;font-weight:500;white-space:nowrap;min-height:29px}
+.card.featured-card .badge{padding:6px 10px;border-radius:8px;font-size:12px;font-weight:600;gap:5px;min-height:30px}
+.card.featured-card .badge svg{width:14px;height:14px}
+
+/* Badge colours — from Figma variables */
+.br,.bav{background:#e4f7f0;color:#237050}
+.bny{background:#fbf3c0;color:#946200}
+.bac,.bo{background:#f2f2f4;color:#52525c}
+.bi{background:#f1e6f1;color:#710577}
+.be{background:#e8f4fb;color:#186f9d}
+
+/* Title */
+.card-title{font-size:16px;font-weight:600;color:#09090b;margin:10px 0 6px;line-height:1.4}
+
+/* Description */
+.card-desc{font-size:11.5px;color:#4A5565;line-height:1.6;margin:6px 0 10px}
+.card.featured-card .card-desc{font-size:13px;line-height:1.6;color:#4A5565;margin:0 0 10px}
+
+/* Age row */
+.age-row{display:flex;align-items:center;gap:5px;margin-top:9px;font-size:13px;color:#52525c}
+.age-lbl{color:#52525c;font-weight:400}
+.age-val{font-weight:500;color:#09090b}
+.card.featured-card .age-row{gap:5px;margin-top:9px;margin-bottom:8px;font-size:13px;color:#52525c}
+.card.featured-card .age-row svg{width:14px;height:14px}
+.card.featured-card .age-lbl{font-size:12px;color:#5d606d}
+.card.featured-card .age-val{font-size:12px;font-weight:500;color:#171717}
+
+/* Conditions box */
+.cond-box{display:flex;align-items:stretch;border:1px solid #ededef;border-radius:8px;margin-top:8px;overflow:hidden}
+.cond-lbl{display:flex;align-items:center;gap:4px;padding:7px 10px;background:#f8f8f9;border-right:1px solid #ededef;font-size:12px;color:#52525c;flex-shrink:0;white-space:nowrap}
+.cond-tags{display:flex;flex-wrap:wrap;align-items:center;gap:5px;padding:6px 10px}
+.card.featured-card .cond-box{border:1px solid #ededef;border-radius:8px;margin-top:8px;overflow:hidden}
+.card.featured-card .cond-lbl{min-width:82px;padding:10px 12px;font-size:12px;gap:6px;background:#f8f8f9;color:#5d606d}
+.card.featured-card .cond-lbl svg{width:14px;height:14px}
+.card.featured-card .cond-tags{padding:8px 10px;gap:6px;min-height:auto;align-items:center}
+
+/* Condition tags */
+.ctag{border:1px solid #e0e0e4;border-radius:8px;padding:2px 8px;font-size:12px;font-weight:500;color:#09090b;background:#fff}
+.cmore{display:flex;align-items:center;gap:2px;font-size:12px;color:#09090b;text-decoration:underline;cursor:pointer}
+.card.featured-card .ctag{min-height:28px;padding:4px 10px;border:1px solid #d1d4db;border-radius:8px;font-size:12px;font-weight:500}
+.card.featured-card .cmore{min-height:auto;padding:0 4px 0 6px;font-size:12px;font-weight:500;color:#171717}
+.card.featured-card .cmore svg{width:12px;height:12px}
+
+/* Card footer */
+.card-foot{display:flex;align-items:center;justify-content:space-between;margin-top:10px}
+.card.featured-card .card-foot{margin-top:10px;align-items:center}
+.ai-tag{display:flex;align-items:center;gap:3px;font-size:12px;font-weight:500;color:#71717b;position:relative}
+.ai-plus{position:absolute;top:-3px;right:-8px;width:9px;height:9px}
+.nct{font-size:12px;font-weight:500;color:#52525c}
+.card.featured-card .ai-tag{font-size:12px;gap:4px;color:#6e717d}
+.card.featured-card .ai-tag>svg:first-child{width:14px;height:14px}
+.card.featured-card .ai-plus{width:9px;height:9px;right:-6px;top:-3px}
+.card.featured-card .nct{font-size:12px;font-weight:500;color:#6f7280}
+
+/* FEATURED HEADER — single unified row */
+.feat-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;gap:10px;background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;padding:7px 12px}
+.feat-notice{display:flex;align-items:center;gap:6px;font-size:11px;color:#6b7280;line-height:1.4;flex:1}
+.feat-notice svg{flex-shrink:0;opacity:.6}
+.feat-see-all{font-size:12px;font-weight:600;color:#003CA5;background:#fff;border:1px solid #bfdbfe;border-radius:6px;padding:4px 12px;cursor:pointer;white-space:nowrap;transition:background .15s;font-family:inherit;flex-shrink:0}
+.feat-see-all:hover{background:#eff6ff}
+
+.sep{display:flex;align-items:center;gap:8px;margin:12px 0 6px;font-size:11px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:#9ca3af}
+.sep::after{content:'';flex:1;height:1px;background:var(--gray-border)}
+.empty{text-align:center;padding:3rem 1rem;color:var(--gray-muted);font-size:14px}
+
+/* PAGINATION */
+.pag{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;background:#fff;border-radius:var(--radius);border:1px solid var(--gray-border);padding:11px 14px;margin-top:12px;font-size:13px}
+.pag-l{display:flex;align-items:center;gap:8px}
+.pp{display:flex;align-items:center;gap:3px;border:1px solid var(--gray-border);border-radius:7px;padding:3px 8px;cursor:pointer}
+.pag-btns{display:flex;align-items:center;gap:3px}
+.pb{width:30px;height:30px;border-radius:7px;border:1px solid var(--gray-border);background:#fff;font-size:13px;color:var(--gray-text);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .15s}
+.pb:hover:not(:disabled):not(.on){background:#f9fafb}
+.pb.on{background:#3b82f6;color:#fff;border-color:#3b82f6;font-weight:700}
+.pb:disabled{opacity:.4;cursor:default}
+
+/* BOTTOM */
+.btm{display:flex;gap:8px;background:#fff;border:1px solid var(--gray-border);border-radius:var(--radius);padding:9px;margin-top:10px}
+.btile{flex:1;background:#f9fafb;border-radius:8px;padding:9px 12px;display:flex;align-items:center;justify-content:center;gap:7px;cursor:pointer;font-size:13px;font-weight:500;transition:background .15s}
+.btile:hover{background:#f3f4f6}
+
+
+/* SESSION DEFINITION CALLOUT */
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-thumb{background:#d1d5db;border-radius:3px}
+
+/* ── DEV FAB — bottom left floating panel ─────────────────────────────── */
+.fab-wrap{position:fixed;bottom:24px;left:24px;z-index:9999;font-family:'Noto Sans',system-ui,sans-serif}
+.fab-btn{width:48px;height:48px;border-radius:50%;background:#003CA5;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(0,60,165,.35);transition:transform .2s,box-shadow .2s}
+.fab-btn:hover{transform:scale(1.08);box-shadow:0 6px 20px rgba(0,60,165,.45)}
+.fab-panel{position:absolute;bottom:60px;left:0;width:580px;max-width:calc(100vw - 48px);background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,.12);overflow:hidden;display:none}
+.fab-panel.open{display:block}
+.fab-panel-hdr{background:#003CA5;padding:12px 16px;display:flex;align-items:center;justify-content:space-between}
+.fab-panel-title{font-size:13px;font-weight:700;color:#fff;display:flex;align-items:center;gap:8px}
+.fab-close{background:rgba(255,255,255,.15);border:none;color:#fff;width:24px;height:24px;border-radius:50%;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;line-height:1}
+.fab-close:hover{background:rgba(255,255,255,.3)}
+.fab-body{padding:14px 16px;font-size:11px;line-height:1.7;color:#374151}
+.fab-cols{display:flex;gap:14px;margin-bottom:12px}
+.fab-col{flex:1;min-width:0}
+.fab-col-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px;display:flex;align-items:center;gap:4px}
+.fab-col ul{padding-left:13px;margin:0;color:#6b7280}
+.fab-col ul li{margin-bottom:2px}
+.fab-col ul li strong{color:#374151}
+.fab-divider{height:1px;background:#f3f4f6;margin:10px 0}
+.fab-controls{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.fab-ctrl-label{font-size:11px;font-weight:600;color:#6b7280;margin-right:2px}
+.fab-btn-ctrl{padding:3px 10px;border-radius:6px;border:1px solid #d1d5db;background:#fff;font-size:11px;cursor:pointer;font-family:inherit;transition:background .15s;color:#374151}
+.fab-btn-ctrl:hover{background:#f3f4f6}
+.fab-btn-ctrl.info{border-color:#93c5fd;color:#1d4ed8}
+.fab-btn-ctrl.danger{border-color:#fca5a5;color:#dc2626}
+.fab-btn-ctrl.danger:hover{background:#fef2f2}
+.fab-clock{font-size:10px;color:#9ca3af;margin-left:auto}
+.fab-status{display:flex;align-items:center;gap:8px;background:#f9fafb;border-radius:7px;padding:7px 10px;margin-bottom:8px}
+.fab-status-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;white-space:nowrap}
+.fab-status-badge.stable{background:#f0fdf4;color:#16a34a;border:1px solid #bbf7d0}
+.fab-status-badge.reshuffled{background:#faf5ff;color:#7c3aed;border:1px solid #e9d5ff}
+.fab-status-badge.restored{background:#f0fdf4;color:#16a34a;border:1px solid #bbf7d0}
+.fab-status-badge.expired{background:#fffbeb;color:#b45309;border:1px solid #fde68a}
+.fab-status-detail{font-size:11px;color:#6b7280;flex:1}
+.fab-dots{display:flex;align-items:center;gap:5px;margin-bottom:10px}
+.fab-dot{width:9px;height:9px;border-radius:50%}
+.fab-dot.on{background:#003CA5}
+.fab-dot.off{background:#e5e7eb}
+.fab-dots-lbl{font-size:10px;color:#6b7280;margin-left:4px}
+.fab-log{max-height:100px;overflow-y:auto;background:#f9fafb;border-radius:6px;padding:6px 8px}
+.fab-log-empty{font-size:10px;color:#9ca3af;font-style:italic}
+.fab-log-row{display:flex;align-items:flex-start;gap:6px;padding:3px 0;border-bottom:1px solid #f3f4f6;font-size:10px}
+.fab-log-row:last-child{border-bottom:none}
+.fab-log-t{color:#9ca3af;white-space:nowrap;flex-shrink:0}
+.fab-log-badge{font-size:9px;font-weight:700;padding:1px 5px;border-radius:3px;white-space:nowrap;flex-shrink:0}
+.fab-log-badge.r{background:#faf5ff;color:#7c3aed}
+.fab-log-badge.s{background:#f0fdf4;color:#16a34a}
+.fab-log-txt{color:#374151;flex:1}
+.fab-dbg{background:#eff6ff;border-radius:6px;padding:6px 10px;font-size:10px;color:#1d4ed8;margin-bottom:8px;line-height:1.8}
+
+/* ── CONCEPT 2: FEATURED SECTION ──────────────────────────────────────────── */
+.feat-section{background:transparent;border:none;padding:0;margin-bottom:0}
+.feat-section-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;gap:12px;flex-wrap:wrap}
+.feat-section-title{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:700;color:#003CA5}
+.feat-section-count{font-size:11px;font-weight:500;color:#6b7280;background:#f3f4f6;padding:2px 8px;border-radius:999px}
+.feat-section-nav{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.feat-page-info{font-size:12px;color:#6b7280}
+.feat-page-num{font-size:12px;font-weight:600;color:#374151;min-width:32px;text-align:center}
+.feat-nav-btn{width:28px;height:28px;border-radius:6px;border:1px solid #e5e7eb;background:#fff;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#374151;transition:background .15s;line-height:1}
+.feat-nav-btn:hover:not(:disabled){background:#f3f4f6;border-color:#9ca3af}
+.feat-nav-btn:disabled{opacity:.35;cursor:default}
+.feat-notice-bar{display:flex;align-items:center;gap:6px;font-size:11px;color:#9ca3af;margin-bottom:12px}
+.feat-notice-bar svg{flex-shrink:0;opacity:.5}
+.feat-cards{display:flex;flex-direction:column;gap:12px}
+.all-section-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;gap:8px}
+.res-count-bar{font-size:14px;color:var(--gray-text);margin-bottom:12px}
+.res-count-bar strong{font-weight:600;color:var(--black)}
+.all-section-title{font-size:14px;font-weight:700;color:#374151}
+.all-section-sub{font-size:11px;color:#9ca3af;margin-left:8px;font-weight:400}
+.all-section-count{font-size:13px;color:#6b7280}
+
+/* ── FIGMA INTEGRATION — layout, typography, spacing ──────────────────────── */
+
+/* CSS variables from Figma */
+:root {
+  --sf-primary-blue: #3399d3;
+  --sf-light-blue: #c0dff1;
+  --sf-black: #09090b;
+  --sf-gray-dark: #52525c;
+  --sf-gray-text: #71717b;
+  --sf-gray-border: #d4d4d8;
+  --sf-gray-lighter: #ededef;
+  --sf-gray-bg: #f8f8f9;
+  --sf-green-bg: #e4f7f0;
+  --sf-green-text: #237050;
+  --sf-purple-bg: #f1e6f1;
+  --sf-purple-text: #710577;
+}
+
+/* Full-width white header */
+.header-wrapper { width:100%; background:#fff; border-bottom:1px solid #e5e7eb; }
+body { background:var(--sf-gray-bg) !important; }
+
+/* Header layout */
+.header { max-width:1440px; margin:0 auto; min-height:80px; padding:20px 80px; gap:24px; border-bottom:none; background:transparent; }
+
+/* Study Finder pill — Figma style */
+.sf-pill { width:auto; min-width:220px; padding:0; background:transparent; border-radius:0; justify-content:flex-start; }
+.sf-pill > svg { display:none; }
+.sf-icon { width:44px; height:44px; background:#f3f4f6; border-radius:12px; }
+.sf-name { font-size:22px; font-weight:700; color:#1f2430; }
+
+/* Search bar */
+.srch { height:52px; border:1px solid var(--sf-gray-border); border-radius:30px; padding:11px 64px 11px 22px; font-size:15px; }
+.srch-btn { right:8px; width:40px; height:40px; background:var(--sf-primary-blue); }
+.srch-btn:hover { background:#2f8ec4; }
+.srch-btn svg path { fill:#fff !important; }
+.srch-ico { display:none; }
+
+/* Layout */
+.layout { max-width:1440px; margin:0 auto; padding:24px 80px 40px; gap:28px; }
+
+/* Filter panel */
+.fp { width:280px; padding:0; background:transparent; border:none; box-shadow:none; overflow:visible; max-height:none; top:20px; }
+.fp > * { background:#fff; border-radius:8px; }
+.fp-hdr { min-height:52px; padding:14px 16px; margin-bottom:8px; font-size:16px; font-weight:700; color:#1f2430; }
+.fs { background:#fff; border-radius:8px; margin-bottom:8px; padding:14px 16px; }
+.fs-title { font-size:14px; font-weight:600; margin-bottom:10px; color:#1f2430; }
+.cl { gap:0; }
+.cr { min-height:40px; padding:6px 0; gap:10px; font-size:14px; color:#1f2430; }
+.cr input[type=checkbox], .cr input[type=radio] { width:20px; height:20px; border-color:#9f9fa9; }
+.cr input[type=checkbox]:checked, .cr input[type=radio]:checked { background:var(--sf-primary-blue); border-color:var(--sf-primary-blue); }
+.cr input[type=checkbox]:checked::after { width:5px; height:9px; border-width:2px; }
+.cr input[type=radio]:checked::after { width:8px; height:8px; }
+.fi { height:42px; padding:10px 14px; border:1px solid var(--sf-gray-border); font-size:14px; }
+.hdiv { display:none; }
+.fa { background:#fff; border-radius:8px; padding:14px 16px; gap:10px; margin-top:0; }
+.btn-c, .btn-a { height:42px; padding:12px 16px; border-radius:8px; font-size:14px; font-weight:500; }
+.btn-c { border:1px solid var(--sf-light-blue); color:#3399d3; background:#fff; }
+.btn-a { background:var(--sf-light-blue); color:#fff; }
+
+/* Main area */
+.main { padding-left:0; min-width:0; }
+
+/* Card sizing — unified, consistent padding */
+.card { padding:18px 20px !important; border-radius:10px !important; border:1px solid #e5e7eb !important; box-shadow:none !important; }
+.card:hover { border-color:#d4d4d8 !important; box-shadow:0 2px 8px rgba(0,0,0,.05) !important; }
+.card.featured-card { border:2px solid #0b49b5 !important; border-radius:10px !important; padding:18px 20px !important; }
+.card.featured-card:hover { border-color:#0b49b5 !important; }
+.card.normal { border:1px solid #e5e7eb !important; }
+.card.normal .fp-badge { display:none !important; }
+
+/* Card typography */
+.card-title { font-size:16px !important; font-weight:600 !important; line-height:1.4 !important; color:#1f2430 !important; margin:0 0 6px !important; }
+.card-desc { font-size:13px !important; color:#4b5563 !important; line-height:1.6 !important; margin:0 0 10px !important; }
+
+/* Badges */
+.badges { display:flex !important; gap:8px !important; margin-bottom:12px !important; padding-right:96px !important; }
+
+/* Badge colours — Figma */
+.br, .bav { background:var(--sf-green-bg); color:var(--sf-green-text); }
+.bac, .bo { background:#f2f2f4; color:var(--sf-gray-dark); }
+.bi { background:var(--sf-purple-bg); color:var(--sf-purple-text); }
+.be { background:#e8f4fb; color:#186f9d; }
+
+/* Condition box */
+.cond-lbl { font-size:13px; color:var(--sf-gray-dark); background:var(--sf-gray-bg); }
+.cond-tags { padding:8px 10px; gap:6px; }
+.ctag { border:1px solid var(--sf-gray-border); border-radius:8px; padding:4px 10px; font-size:13px; }
+
+/* Footer */
+.ai-tag { font-size:12px; color:var(--sf-gray-text); }
+.nct { font-size:12px; color:var(--sf-gray-dark); }
+
+/* Pagination */
+.pag { border:1px solid var(--sf-gray-lighter); border-radius:8px; box-shadow:none; background:#fff; }
+.pb.on { background:var(--sf-primary-blue); border-color:var(--sf-primary-blue); }
+
+/* Result count bar */
+.res-count-bar { font-size:14px; color:var(--sf-gray-dark); margin-bottom:12px; }
+.res-count-bar strong { font-weight:600; color:var(--sf-black); }
+.all-section-title { font-size:15px; font-weight:700; color:#1f2430; }
+
+</style>
+</head>
+<body>
+
+<!-- TOAST CONTAINER -->
+<div class="toast-wrap" id="toastWrap"></div>
+
+<!-- HEADER -->
+<div class="header-wrapper">
+<div class="header">
+  <div class="sf-pill">
+    <div class="sf-pill-l">
+      <div class="sf-icon">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none"><path d="M19 20.25H13.25V19.63C16.38 19.04 18.75 16.29 18.75 13C18.75 11.19 18.04 9.5 16.78 8.24L17.78 7.25C18.52 6.76 18.52 5.67 18.19 4.63C18.44 4.33 18.44 3.89 18.16 3.61L17.16 2.61C16.88 2.33 16.44 2.32 16.14 2.58C15.28 2.05 14.34 2.18 13.52 2.99L8.76 7.76C8.14 8.37 7.91 9.06 8.07 9.73L7.33 10.47C6.62 11.18 6.62 12.07 7.33 12.78L8 13.44C8.34 13.8 8.73 13.97 9.14 13.97C9.56 13.97 9.94 13.8 10.3 13.44L11.04 12.7C11.44 12.75 12.52 12.5 13.01 12.01L15.72 9.3C16.7 10.28 17.25 11.6 17.25 13C17.25 15.89 14.89 18.25 12 18.25C10.61 18.25 9.3 17.69 8.33 16.75H10C10.41 16.75 10.75 16.41 10.75 16C10.75 15.58 10.41 15.25 10 15.25H5C4.59 15.25 4.25 15.58 4.25 16C4.25 16.41 4.59 16.75 5 16.75H6.41C7.61 18.53 9.59 19.65 11.75 19.73V20.25H6C5.59 20.25 5.25 20.58 5.25 21C5.25 21.41 5.59 21.75 6 21.75H19C19.41 21.75 19.75 21.41 19.75 21C19.75 20.58 19.41 20.25 19 20.25Z" fill="#52525C"/></svg>
+      </div>
+      <span class="sf-name">Study Finder</span>
+    </div>
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M16.53 13.47C16.82 13.76 16.82 14.24 16.53 14.53L12.53 18.53C12.38 18.68 12.19 18.75 12 18.75L11.47 18.53L7.47 14.53C7.18 14.24 7.18 13.76 7.47 13.47C7.76 13.18 8.24 13.18 8.53 13.47L12 16.94L15.47 13.47C15.76 13.18 16.24 13.18 16.53 13.47Z" fill="#3F3F47"/></svg>
+  </div>
+  <div class="search-wrap">
+    <div class="srch-ico"><svg width="16" height="16" viewBox="0 0 21 21" fill="none"><circle cx="10.67" cy="10.5" r="8.33" stroke="#6b7280" stroke-width="1.3"/><path d="M17 17L20 20" stroke="#6b7280" stroke-width="1.3" stroke-linecap="round"/></svg></div>
+    <input class="srch" id="searchInput" type="text" placeholder="Search study details…" oninput="applyFilters()">
+    <button class="srch-btn" onclick="applyFilters()">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M21.53 20.47L17.69 16.63C18.97 15.11 19.75 13.14 19.75 11C19.75 6.18 15.82 2.25 11 2.25C6.18 2.25 2.25 6.18 2.25 11C2.25 15.82 6.18 19.75 11 19.75C13.14 19.75 15.11 18.97 16.63 17.69L20.47 21.53C20.82 21.24 21.82 20.76 21.53 20.47ZM3.75 11C3.75 7 7 3.75 11 3.75C15 3.75 18.25 7 18.25 11C18.25 15 15 18.25 11 18.25C7 18.25 3.75 15 3.75 11Z" fill="#1d4ed8"/></svg>
+    </button>
+  </div>
+</div>
+</div><!-- /header-wrapper -->
+
+<!-- LAYOUT -->
+<div class="layout">
+
+  <!-- FILTER PANEL -->
+  <div class="fp">
+    <div class="fp-hdr">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M3 6.25H7.25V7.5C7.25 7.91 7.59 8.25 8 8.25C8.41 8.25 8.75 7.91 8.75 7.5V3.5C8.75 3.09 8.41 2.75 8 2.75C7.59 2.75 7.25 3.09 7.25 3.5V4.75H3C2.59 4.75 2.25 5.09 2.25 5.5C2.25 5.91 2.59 6.25 3 6.25ZM12 6.25H21C21.41 6.25 21.75 5.91 21.75 5.5C21.75 5.09 21.41 4.75 21 4.75H12C11.59 4.75 11.25 5.09 11.25 5.5C11.25 5.91 11.59 6.25 12 6.25ZM3 13.25H12C12.41 13.25 12.75 12.91 12.75 12.5C12.75 12.09 12.41 11.75 12 11.75H3C2.59 11.75 2.25 12.09 2.25 12.5C2.25 12.91 2.59 13.25 3 13.25ZM21 11.75H16.75V10.5C16.75 10.09 16.41 9.75 16 9.75C15.59 9.75 15.25 10.09 15.25 10.5V14.5C15.25 14.91 15.59 15.25 16 15.25C16.41 15.25 16.75 14.91 16.75 14.5V13.25H21C21.41 13.25 21.75 12.91 21.75 12.5C21.75 12.09 21.41 11.75 21 11.75Z" fill="#040325"/></svg>
+      Filter
+    </div>
+
+    <div class="fs"><div class="fs-title"><span>Condition ⓘ</span></div><input class="fi" id="conditionFilter" type="text" placeholder="Enter condition/diagnosis" oninput="applyFilters()"></div>
+    <div class="fs"><div class="fs-title"><span>Location ⓘ</span></div><input class="fi" type="text" placeholder="Enter full state/province name"></div>
+    <hr class="hdiv">
+
+    <div class="fs">
+      <div class="fs-title"><span>Study Type ⓘ</span><span class="chev" id="chev-type" onclick="tog('type')">∧</span></div>
+      <div class="cl" id="sec-type">
+        <label class="cr"><input type="checkbox" value="Interventional" onchange="applyFilters()"> Interventional</label>
+        <label class="cr"><input type="checkbox" value="Observational" onchange="applyFilters()"> Observational</label>
+        <label class="cr"><input type="checkbox" value="Expanded access" onchange="applyFilters()"> Expanded access</label>
+      </div>
+    </div>
+
+    <div class="fs">
+      <div class="fs-title"><span>Study Status ⓘ</span><span class="chev" id="chev-status" onclick="tog('status')">∧</span></div>
+      <div class="cl" id="sec-status">
+        <label class="cr"><input type="checkbox" value="Recruiting" onchange="applyFilters()"> Recruiting</label>
+        <label class="cr"><input type="checkbox" value="Active not recruiting" onchange="applyFilters()"> Active not recruiting</label>
+        <label class="cr"><input type="checkbox" value="Not yet recruiting" onchange="applyFilters()"> Not yet recruiting</label>
+        <label class="cr"><input type="checkbox" value="Enrolling by invitation" onchange="applyFilters()"> Enrolling by invitation</label>
+        <label class="cr"><input type="checkbox" value="Available" onchange="applyFilters()"> Available</label>
+        <label class="cr"><input type="checkbox" value="No longer available" onchange="applyFilters()"> No longer available</label>
+      </div>
+    </div>
+
+    <div class="fs">
+      <div class="fs-title"><span>Sex ⓘ</span><span class="chev" id="chev-sex" onclick="tog('sex')">∧</span></div>
+      <div class="cl" id="sec-sex">
+        <label class="cr"><input type="radio" name="sex" value="all" checked onchange="applyFilters()"> All</label>
+        <label class="cr"><input type="radio" name="sex" value="female" onchange="applyFilters()"> Female</label>
+        <label class="cr"><input type="radio" name="sex" value="male" onchange="applyFilters()"> Male</label>
+      </div>
+    </div>
+
+    <div class="fs">
+      <div class="fs-title"><span>Age Group ⓘ</span><span class="chev" id="chev-age" onclick="tog('age')">∧</span></div>
+      <div class="cl" id="sec-age">
+        <label class="cr"><input type="checkbox" value="0-17" onchange="applyFilters()"> 0–17</label>
+        <label class="cr"><input type="checkbox" value="18-64" onchange="applyFilters()"> 18–64</label>
+        <label class="cr"><input type="checkbox" value="65+" onchange="applyFilters()"> 65+</label>
+      </div>
+    </div>
+
+    <div class="fs">
+      <div class="fs-title"><span>Study Phase ⓘ</span><span class="chev" id="chev-phase" onclick="tog('phase')">∧</span></div>
+      <div class="cl" id="sec-phase">
+        <label class="cr"><input type="checkbox" value="early-phase-1" onchange="applyFilters()"> Early Phase 1</label>
+        <label class="cr"><input type="checkbox" value="not-applicable" onchange="applyFilters()"> Not applicable</label>
+        <label class="cr"><input type="checkbox" value="phase-1" onchange="applyFilters()"> Phase 1</label>
+        <label class="cr"><input type="checkbox" value="phase-2" onchange="applyFilters()"> Phase 2</label>
+        <label class="cr"><input type="checkbox" value="phase-3" onchange="applyFilters()"> Phase 3</label>
+        <label class="cr"><input type="checkbox" value="phase-4" onchange="applyFilters()"> Phase 4</label>
+      </div>
+    </div>
+
+    <div class="fa">
+      <button class="btn-c" onclick="clearAll()">Clear All</button>
+      <button class="btn-a" onclick="applyFilters()">Apply Filters</button>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+
+
+    <div class="card-list" id="cardList"></div>
+
+    <!-- PAGINATION -->
+    <div class="pag">
+      <div class="pag-l" style="font-size:13px;color:#6b7280" id="pagInfo"></div>
+      <div class="pag-btns" id="pagBtns"></div>
+    </div>
+
+    <!-- BOTTOM BAR -->
+    <div class="btm">
+      <div class="btile"><span>Powered By</span><svg width="20" height="16" viewBox="0 0 30 24" fill="none"><path d="M14.62 1.16C15.56 0.96 15.83 1.77 16.03 2C16.27 2.29 16.4 2.55 16.45 2.89C16.5 3.22 16.47 3.61 16.34 4.05C16.2 4.49 15.95 4.97 15.38 5.77C14.81 6.57 13.92 7.7 13.03 8.77C12.14 9.84 11.25 10.85 10.61 11.55C9.96 12.26 9.57 12.65 9.21 12.99L7.42 14.33C7.13 14.4 6.83 14.4 6.53 14.32L5.56 13.8C5.17 13.52 4.67 13.12 3.97 12.54C3.26 11.95 2.35 11.18 1.83 10.74C1.16 10.21 0.97 10.15 0.35 10.16C0 10.51 0 10.79 0 10.79C0 11.07 0.15 11.42 0.37 11.76L1.69 13.25C2.5 14.07 3.83 15.38 4.55 16.12C5.27 16.86 5.37 17.04 5.45 17.28C5.52 17.52 5.58 17.82 5.57 18.14L4.65 21.29C4.62 21.56 4.77 21.96 4.77 21.96C5.03 22.2 5.51 22.3 5.68 22.26C5.85 22.22 6.21 22.01 6.21 22.01L7.34 20.9C7.55 20.72 7.8 20.59 8.09 20.59C8.39 20.6 8.74 20.73 9.04 20.9L9.87 21.39C10.11 21.53 10.75 21.7 10.75 21.7C11.02 21.66 11.64 21.01 11.47 20.32C11.3 19.9 10.97 19.33 10.69 18.86C10.42 18.39 10.2 18.01 10.09 17.72C9.98 17.42 9.98 17.21 10.03 16.92C10.44 15.71 12.39 12.76 13.66 11.07C14.93 9.38 18.25 4.68 18.25 4.68C18.32 4.29 18.32 3.83 18.23 3.4C18.14 2.97 17.75 2.26 17.75 2.26C17.54 1.96 17.06 1.56 17.06 1.56C16.79 1.37 16.22 1.13 16.22 1.13C15.95 1.03 15.42 0.96 15.42 0.96C15.23 0.95 15.03 0.96 14.74 1.02C14.68 1.04 14.62 1.09 14.62 1.16Z" fill="#F7C413"/></svg><strong>WeTrials</strong></div>
+      <div class="btile"><svg width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M22 16.9C22 14.57 21.12 13.3 19.93 12.62C19.83 5.97 17.37 3 12 3C6.63 3 4.16 5.98 4.07 12.64C2.93 13.32 2 14.57 2 16.9C2 21.43 5.31 21.96 7.8 21.96C8.19 21.96 8.53 21.7 8.66 21.32C9.59 18.47 9.59 15.33 8.66 12.49C8.53 12.11 8.19 11.85 7.8 11.85C7.36 11.85 6.67 11.85 5.91 11.99C6.15 6.1 8.53 4.85 12 4.85C15.47 4.85 17.85 6.1 18.09 11.99C17.45 11.88 16.81 11.85 16.2 11.85C15.81 11.85 15.47 12.11 15.34 12.49C14.54 14.95 14.43 17.62 15.02 20.14C14.05 20.16 13.12 20.13 12.25 20.06C11.74 20.02 11.31 20.4 11.27 20.91C11.23 21.42 11.6 21.86 12.1 21.91C12.86 21.97 13.66 22 14.49 22C15.06 22 15.64 21.99 16.23 21.96C17.69 21.96 22 21.93 22 16.9Z" fill="#09090B"/></svg> Contact Support</div>
+    </div>
+  </div>
+</div>
+
+<script>
+
+// ══════════════════════════════════════════════════════════════════════════════
+// SESSION LOGIC — WeTrials Featured Rotation
+// ══════════════════════════════════════════════════════════════════════════════
+//
+//  RULE: Selection persists for 48 hours from when it was first made.
+//  No matter what the user does within that window — refresh, close tab,
+//  reopen tab, come back the next day — they see the same featured studies.
+//  After 48 hours the selection silently resets on next visit.
+//
+//  DEFAULT STATE (no search, no filters):
+//    • First visit → 5 featured studies randomly selected, saved to localStorage with timestamp
+//    • Any return within 48h → exact same selection restored, always
+//    • After 48h → old selection cleared, new random selection made
+//
+//  FILTERED STATE (any search or filter active):
+//    • Show ALL featured studies that match — no 5-study cap
+//    • Stored default selection untouched in localStorage
+//    • Returning to default → restore session-locked selection (no reset)
+//
+//  SESSION RESET — the only triggers:
+//    • 48h TTL elapsed — happens silently on next page load/visit
+//    • Never on: refresh, tab close, tab reopen, filter apply, filter clear,
+//      pagination, sort, scroll, opening a card
+//
+//  localStorage keys:
+//    wt_feat_ids   — JSON array of study IDs  e.g. [3,7,1,9,5]
+//    wt_feat_ts    — Unix ms timestamp of when selection was made
+// ══════════════════════════════════════════════════════════════════════════════
+
+
+// ── STUDY DATA ────────────────────────────────────────────────────────────────
+const STUDIES = [
+  {id:1,  title:"Surgical Pembro +/- Olaparib w TMZ for rGBM",                                                          desc:"This study uses immunotherapy (helps the immune system fight the tumor) together with treatment that damages tumor cells and olaparib (blocks how tumor cells repair themselves), with or without surgery.",                                                                                                      status:"Recruiting",          type:"Interventional",  phase:"phase-2", featured:true,  minAge:18, maxAge:999, conditions:["Recurrent Glioblastoma","GBM"],                           more:0, nct:"NCT06561201", kw:["glioblastoma","gbm","recurrent","immunotherapy","pembro","olaparib","tmz"]},
+  {id:2,  title:"A Study With L19TNF in Combination With Lomustine in Patients With Glioblastoma at Progression or Recurrence", desc:"This study tests L19TNF (a targeted treatment designed to act more directly on the tumor area) together with treatment that damages tumor cells to find the safest and most effective dose.",                                                                                                          status:"Recruiting",          type:"Interventional",  phase:"phase-1", featured:true,  minAge:18, maxAge:999, conditions:["Glioblastoma","Recurrent Glioblastoma"],                  more:0, nct:"NCT06561202", kw:["glioblastoma","gbm","recurrent","l19tnf","lomustine"]},
+  {id:3,  title:"INdividualized Screening Trial of Innovative Glioblastoma Therapy (INSIGhT)",                            desc:"This study compares several treatment approaches for glioblastoma, including treatment that damages tumor cells and other targeted medicines, to see which options may work best for different patients.",                                                                                                      status:"Recruiting",          type:"Interventional",  phase:"phase-2", featured:true,  minAge:18, maxAge:999, conditions:["Glioblastoma","Newly Diagnosed GBM"],                      more:0, nct:"NCT02977780", kw:["glioblastoma","gbm","insight","screening","targeted","newly diagnosed"]},
+  {id:4,  title:"A Feasibility Study to Evaluate the Safety of the TheraSphere GBM Device in Patients With Recurrent GBM", desc:"This study tests a device-based treatment that delivers radiation directly into blood vessels feeding the tumor, aiming to target the tumor more precisely.",                                                                                                                                      status:"Recruiting",          type:"Interventional",  phase:"phase-2", featured:true,  minAge:18, maxAge:999, conditions:["Glioblastoma Multiforme","Recurrent GBM"],                  more:0, nct:"NCT05303467", kw:["gbm","glioblastoma","therasphere","recurrent","device","radiation"]},
+  {id:5,  title:"Safety and Efficacy Study in Recurrent or Progressive Grade III or IV IDH1 Mutated Glioma",             desc:"This study tests NEO100 (perillyl alcohol), a treatment given through the nose, for people with certain returning or growing brain tumors with an IDH1 change.",                                                                                                                                status:"Recruiting",          type:"Interventional",  phase:"phase-2", featured:true,  minAge:18, maxAge:999, conditions:["IDH1 Mutated Glioma","Recurrent Glioma","Grade III Glioma","Grade IV Glioma"], more:0, nct:"NCT03732235", kw:["glioma","idh1","mutated","recurrent","progressive","neo100","perillyl"]},
+  {id:6,  title:"Study to Evaluate Safety, Tolerability, and Optimal Dose of Candidate GBM Vaccine VBI-1901 in Recurrent GBM Subjects", desc:"This study tests a vaccine-based treatment designed to help the immune system recognize and fight the tumor in people with recurrent glioblastoma.",                                                                                                                     status:"Recruiting",          type:"Interventional",  phase:"phase-1", featured:true, minAge:18, maxAge:999, conditions:["Recurrent Glioblastoma"],                                      more:0, nct:"NCT03382977", kw:["glioblastoma","gbm","recurrent","vaccine","vbi-1901","immunotherapy"]},
+  {id:7,  title:"A Trial to Evaluate Multiple Regimens in Newly Diagnosed and Recurrent Glioblastoma",                   desc:"This study tests several treatment options for newly diagnosed or returning glioblastoma, including radiotherapy (uses focused radiation to target the tumor), treatment that damages tumor cells, and targeted medicines.",                                                                              status:"Recruiting",          type:"Interventional",  phase:"phase-2", featured:true, minAge:18, maxAge:999, conditions:["Glioblastoma","Newly Diagnosed GBM","Recurrent GBM"],           more:0, nct:"NCT03970447", kw:["glioblastoma","gbm","newly diagnosed","recurrent","radiotherapy","multiple regimens"]},
+  {id:8,  title:"Anti-Lag-3 (Relatlimab) and Anti-PD-1 Blockade (Nivolumab) Versus Standard of Care (Lomustine) for the Treatment of Patients With Recurrent Glioblastoma", desc:"This study compares immunotherapy using relatlimab and nivolumab with a standard medicine that damages tumor cells in people whose glioblastoma has come back.",                                                          status:"Recruiting",          type:"Interventional",  phase:"phase-3", featured:true, minAge:18, maxAge:999, conditions:["Recurrent Glioblastoma"],                                      more:0, nct:"NCT04729322", kw:["glioblastoma","gbm","recurrent","nivolumab","relatlimab","immunotherapy","lag-3","pd-1"]},
+  {id:9,  title:"Study of ABBV-637 or ABBV-155 With ERAS-801 for People With Glioblastoma",                              desc:"This study tests new targeted medicines, alone or together, and may also include radiotherapy (uses focused radiation to target the tumor) and treatment that damages tumor cells.",                                                                                                                     status:"Recruiting",          type:"Interventional",  phase:"phase-1", featured:true, minAge:18, maxAge:999, conditions:["Glioblastoma"],                                              more:0, nct:"NCT05563701", kw:["glioblastoma","gbm","abbv-637","abbv-155","eras-801","targeted"]},
+  {id:10, title:"Adjuvant Temozolomide ± 5-Aminolevulinic Acid + Low Intensity Diffuse Ultrasound Sonodynamic Therapy System for Newly Diagnosed Glioblastoma", desc:"This study tests whether adding a light-sensitive medicine with ultrasound treatment to standard tumor-damaging treatment may help after initial treatment for newly diagnosed glioblastoma.",                                           status:"Recruiting",          type:"Interventional",  phase:"phase-2", featured:true, minAge:18, maxAge:999, conditions:["Glioblastoma","Newly Diagnosed GBM"],                      more:0, nct:"NCT05902169", kw:["glioblastoma","gbm","newly diagnosed","temozolomide","ultrasound","sonodynamic","5-ala"]},
+  {id:11, title:"Evaluation of Eflornithine Plus Temozolomide in Patients With Newly Diagnosed Glioblastoma or Astrocytoma", desc:"This study tests eflornithine together with treatment that damages tumor cells for people with newly diagnosed glioblastoma or astrocytoma.",                                                                                                                                      status:"Recruiting",          type:"Interventional",  phase:"phase-2", featured:false, minAge:18, maxAge:999, conditions:["Glioblastoma","Astrocytoma","Newly Diagnosed GBM"],            more:0, nct:"NCT03102034", kw:["glioblastoma","astrocytoma","newly diagnosed","eflornithine","temozolomide"]},
+  {id:12, title:"Repeated Super-selective Intraarterial Cerebral Infusion of Bevacizumab (Avastin) for Treatment of Relapsed GBM and AA", desc:"This study delivers bevacizumab (a medicine that tries to reduce the tumor's blood supply) directly into arteries leading to the brain tumor after it has returned.",                                                                                              status:"Recruiting",          type:"Interventional",  phase:"phase-1", featured:false, minAge:18, maxAge:999, conditions:["Relapsed GBM","Anaplastic Astrocytoma"],                      more:0, nct:"NCT01811498", kw:["gbm","glioblastoma","relapsed","bevacizumab","avastin","intraarterial","anaplastic astrocytoma"]},
+  {id:13, title:"A Study to Assess the Safety and Tolerability of AZD1390 Given With Radiation Therapy in Patients With Brain Cancer", desc:"This study tests AZD1390 together with radiotherapy (uses focused radiation to target the tumor) to see if the combination can be given safely.",                                                                                                               status:"Recruiting",          type:"Interventional",  phase:"phase-1", featured:false, minAge:18, maxAge:999, conditions:["Brain Cancer","Glioblastoma"],                               more:0, nct:"NCT03423628", kw:["brain cancer","glioblastoma","azd1390","radiation","radiotherapy"]},
+  {id:14, title:"Study of Silevertinib With Temozolomide for the Treatment of Newly Diagnosed GBM With Unmethylated MGMT and EGFRvIII", desc:"This study combines silevertinib (a targeted medicine that blocks signals that may help tumor cells grow) with treatment that damages tumor cells in a specific type of newly diagnosed glioblastoma.",                                                          status:"Recruiting",          type:"Interventional",  phase:"phase-2", featured:false, minAge:18, maxAge:999, conditions:["Glioblastoma","Newly Diagnosed GBM","MGMT Unmethylated","EGFRvIII"], more:0, nct:"NCT05261789", kw:["glioblastoma","gbm","newly diagnosed","silevertinib","temozolomide","mgmt","egfrviii"]},
+  {id:15, title:"Trastuzumab Deruxtecan (T-DXd) for People With Brain Cancer",                                           desc:"This study tests trastuzumab deruxtecan, a targeted medicine that delivers anti-cancer treatment directly to tumor cells carrying HER2.",                                                                                                                                                         status:"Recruiting",          type:"Interventional",  phase:"phase-2", featured:false, minAge:18, maxAge:999, conditions:["Brain Cancer","HER2-Positive Brain Tumor"],                   more:0, nct:"NCT04482309", kw:["brain cancer","her2","trastuzumab","deruxtecan","t-dxd","targeted"]},
+  {id:16, title:"Oral Capecitabine and Temozolomide (CAPTEM) for Newly Diagnosed GBM",                                   desc:"This study uses two oral medicines that damage tumor cells for people with newly diagnosed glioblastoma.",                                                                                                                                                                                          status:"Recruiting",          type:"Interventional",  phase:"phase-2", featured:false, minAge:18, maxAge:999, conditions:["Glioblastoma","Newly Diagnosed GBM"],                      more:0, nct:"NCT02669173", kw:["glioblastoma","gbm","newly diagnosed","capecitabine","temozolomide","captem","oral"]},
+  {id:17, title:"A Study of Debio 0123 in Combination With Temozolomide in Adult Participants With Recurrent or Progressive Glioblastoma", desc:"This study tests Debio 0123 (a targeted medicine that blocks a repair process used by tumor cells) with treatment that damages tumor cells, and for some patients also with radiotherapy (uses focused radiation to target the tumor).",                          status:"Recruiting",          type:"Interventional",  phase:"phase-1", featured:false, minAge:18, maxAge:999, conditions:["Glioblastoma","Recurrent GBM","Newly Diagnosed GBM"],          more:0, nct:"NCT04886661", kw:["glioblastoma","gbm","recurrent","progressive","debio 0123","temozolomide","radiotherapy"]},
+  {id:18, title:"Safety and Tolerability of TNG456 Alone and in Combination With Abemaciclib in Patients With Solid Tumors With MTAP Loss", desc:"This study tests TNG456 alone or with abemaciclib (a targeted medicine that slows tumor cell growth) in tumors with a specific genetic feature called MTAP loss.",                                                                                            status:"Recruiting",          type:"Interventional",  phase:"phase-1", featured:false, minAge:18, maxAge:999, conditions:["Solid Tumors","MTAP Loss","Brain Tumor"],                    more:0, nct:"NCT05093660", kw:["solid tumor","brain tumor","mtap","tng456","abemaciclib","targeted"]},
+  {id:19, title:"Testing the Addition of an Anti-Cancer Drug, Triapine, to the Usual Radiation Therapy for Recurrent Glioblastoma or Astrocytoma", desc:"This study adds triapine to usual radiotherapy (uses focused radiation to target the tumor) to see whether the combination may work better for recurrent brain tumors.",                                                                              status:"Recruiting",          type:"Interventional",  phase:"phase-2", featured:false, minAge:18, maxAge:999, conditions:["Recurrent Glioblastoma","Astrocytoma"],                        more:0, nct:"NCT04277780", kw:["glioblastoma","astrocytoma","recurrent","triapine","radiation","radiotherapy"]},
+  {id:20, title:"Super-selective Intra-arterial Repeated Infusion of Cetuximab for the Treatment of Newly Diagnosed Glioblastoma", desc:"This study delivers cetuximab (a targeted medicine that blocks growth signals used by tumor cells) directly into arteries feeding the tumor in newly diagnosed glioblastoma.",                                                                                          status:"Recruiting",          type:"Interventional",  phase:"phase-2", featured:false, minAge:18, maxAge:999, conditions:["Glioblastoma","Newly Diagnosed GBM"],                      more:0, nct:"NCT02800486", kw:["glioblastoma","gbm","newly diagnosed","cetuximab","intraarterial","intra-arterial"]},
+  {id:21, title:"Anti-GD2 ADC M3554 in Advanced Solid Tumors",                                                           desc:"This study tests M3554, a targeted medicine designed to attach to GD2 on tumor cells and deliver anti-cancer treatment more directly.",                                                                                                                                                            status:"Recruiting",          type:"Interventional",  phase:"phase-1", featured:false, minAge:18, maxAge:999, conditions:["Advanced Solid Tumors","Brain Tumor"],                        more:0, nct:"NCT04682847", kw:["solid tumor","brain tumor","gd2","m3554","adc","targeted","anti-gd2"]},
+  {id:22, title:"Super Selective Intra-arterial Repeated Infusion of Cetuximab (Erbitux) With Reirradiation for Treatment of Relapsed/Refractory GBM, AA, and AOA", desc:"This study combines cetuximab, delivered directly into arteries feeding the tumor, with another course of radiotherapy (uses focused radiation to target the tumor) for brain tumors that returned after treatment.",           status:"Recruiting",          type:"Interventional",  phase:"phase-2", featured:false, minAge:18, maxAge:999, conditions:["Relapsed GBM","Anaplastic Astrocytoma","Anaplastic Oligoastrocytoma"], more:0, nct:"NCT02848235", kw:["gbm","glioblastoma","relapsed","refractory","cetuximab","erbitux","reirradiation","intraarterial"]},
+  {id:23, title:"A Study of 177Lu-PSMA-617 in People With Gliomas",                                                      desc:"This study tests 177Lu-PSMA-617, a targeted radioactive treatment designed to attach to tumor cells and deliver radiation more directly.",                                                                                                                                                        status:"Recruiting",          type:"Interventional",  phase:"phase-1", featured:false, minAge:18, maxAge:999, conditions:["Glioma","Brain Tumor"],                                      more:0, nct:"NCT05413850", kw:["glioma","brain tumor","177lu","psma","radioactive","targeted","lutetium"]},
+  {id:24, title:"A Study of Repotrectinib in Pediatric and Young Adult Subjects Harboring ALK, ROS1, OR NTRK1-3 Alterations", desc:"This study tests repotrectinib, a targeted medicine that blocks specific genetic changes that may be helping the tumor grow in children and young adults.",                                                                                                                  status:"Recruiting",          type:"Interventional",  phase:"phase-1", featured:false, minAge:1,  maxAge:25,  conditions:["Pediatric Brain Tumor","ALK Alteration","ROS1 Alteration","NTRK Alteration"], more:0, nct:"NCT03093116", kw:["pediatric","young adult","brain tumor","repotrectinib","alk","ros1","ntrk","targeted"]},
+];
+const SESSION_TTL_MS = 48 * 60 * 60 * 1000; // 48h
+const KEY_START = 'wt_feat_start'; // localStorage key for starting index
+const KEY_TS    = 'wt_feat_ts';    // localStorage key for session timestamp
+const FEAT_PAGE_SIZE = 5;          // studies per page in featured section
+const SIMULATED_TOTAL = 1254;      // simulated total study count for pagination
+
+// ── IN-MEMORY STATE ───────────────────────────────────────────────────────────
+let sessionStart = 0;   // index of first featured study for this session
+let featPage     = 0;   // current page offset within featured section (0-based)
+let currentPage  = 1;   // current page of All Studies (1-based)
+let featVisible  = true;// whether featured section is shown
+let ctxKey       = '';  // last rendered filter context key
+let isFirst      = true;// suppress toasts on first render
+let sessionLog   = [];  // event log
+
+// In-memory fallback for sandboxed/incognito environments
+var _memStart = null, _memTs = null;
+
+function _lsSet(k, v) { try { localStorage.setItem(k, v); } catch(e) {} }
+function _lsGet(k)    { try { return localStorage.getItem(k); } catch(e) { return null; } }
+function _lsDel(k)    { try { localStorage.removeItem(k); } catch(e) {} }
+
+// ── SESSION: STARTING INDEX ───────────────────────────────────────────────────
+//
+//  The starting index determines which featured study is shown first.
+//  It is calculated from the current time window:
+//
+//    startIndex = floor(now / TTL) * PAGE_SIZE  mod  totalFeatured
+//
+//  Every 48h the window shifts by PAGE_SIZE positions.
+//  All users in the same 48h window see the same starting set.
+//  After 48h a new window begins and the next 5 sponsors get first position.
+//
+//  Within the session:
+//    - startIndex is fixed and saved to localStorage
+//    - featPage tracks how many pages the user has navigated forward/back
+//    - The visible set = STUDIES.filter(featured).slice(startIndex + featPage*5, ...)
+//      with wraparound
+//
+function calcStartIndex(total) {
+  // Random start per session — stored in localStorage with 48h TTL
+  // Each new session (or after 48h) gets a new random starting position
+  // This ensures different users (and different sessions) see different sponsors first
+  return Math.floor(Math.random() * total);
+}
+
+function saveSessionStart(idx) {
+  _memStart = idx;
+  _memTs    = Date.now();
+  _lsSet(KEY_START, String(idx));
+  _lsSet(KEY_TS,    String(_memTs));
+}
+
+function loadSessionStart() {
+  try {
+    const rawIdx = _lsGet(KEY_START);
+    const rawTs  = _lsGet(KEY_TS);
+    const idx = rawIdx !== null ? parseInt(rawIdx) : _memStart;
+    const ts  = rawTs  !== null ? parseInt(rawTs)  : _memTs;
+    if (idx === null || !ts) return null;
+    const age = Date.now() - ts;
+    if (age > SESSION_TTL_MS) {
+      _lsDel(KEY_START); _lsDel(KEY_TS);
+      _memStart = null; _memTs = null;
+      return { expired: true, age };
+    }
+    return { idx, ts, age, remaining: SESSION_TTL_MS - age };
+  } catch(e) { return null; }
+}
+
+// ── UTILS ─────────────────────────────────────────────────────────────────────
+function shuffle(a){const r=[...a];for(let i=r.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[r[i],r[j]]=[r[j],r[i]];}return r;}
+function hms(){return new Date().toLocaleTimeString('en-US',{hour12:false,hour:'2-digit',minute:'2-digit',second:'2-digit'});}
+function fmtAge(ms){const h=Math.floor(ms/3600000),m=Math.floor((ms%3600000)/60000);if(h>=48)return `${Math.floor(h/24)}d ${h%24}h`;if(h>0)return `${h}h ${m}m`;if(m>0)return `${m}m`;return 'just now';}
+function fmtRemaining(ms){if(ms<=0)return 'expired';const h=Math.floor(ms/3600000),m=Math.floor((ms%3600000)/60000);if(h>0)return `${h}h ${m}m remaining`;return `${m}m remaining`;}
+function tog(id){const s=document.getElementById('sec-'+id),c=document.getElementById('chev-'+id);if(!s)return;const h=s.style.display==='none';s.style.display=h?'':'none';c.textContent=h?'∧':'∨';}
+
+// ── SESSION CLOCK ─────────────────────────────────────────────────────────────
+function updateClock(){
+  const el=document.getElementById('sessClock');
+  if(!el) return;
+  try{
+    const tsRaw=_lsGet(KEY_TS)||(_memTs?String(_memTs):'0');
+    const ts=parseInt(tsRaw);
+    if(!ts){el.textContent='No active session';return;}
+    const age=Date.now()-ts;
+    const rem=SESSION_TTL_MS-age;
+    const started=new Date(ts).toLocaleString('en-US',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit',hour12:true});
+    el.innerHTML=`Started: <strong>${started}</strong> · Age: <strong>${fmtAge(age)}</strong> · <strong>${fmtRemaining(rem)}</strong>`;
+  }catch(e){}
+}
+
+// ── SESSION LOG ───────────────────────────────────────────────────────────────
+function pushLog(type,trigger,detail){
+  sessionLog.unshift({type,trigger,detail,t:hms()});
+  if(sessionLog.length>30) sessionLog.pop();
+  renderLog();
+}
+function renderLog(){
+  const el=document.getElementById('logBody');
+  if(!el) return;
+  if(!sessionLog.length){el.innerHTML='<div class="fab-log-empty">No events yet</div>';return;}
+  const label={new:'↻ New window',restored:'● Restored',expired:'⏱ Expired',filtered:'🔍 Filter',stable:'● Stable',nav:'◀▶ Nav'};
+  const badgeCls={new:'r',expired:'r',restored:'s',stable:'s',filtered:'s',nav:'s'};
+  el.innerHTML=sessionLog.map(e=>`
+    <div class="fab-log-row">
+      <span class="fab-log-t">${e.t}</span>
+      <span class="fab-log-badge ${badgeCls[e.type]||'s'}">${label[e.type]||e.type}</span>
+      <span class="fab-log-txt"><strong>${e.trigger}</strong>${e.detail?' — '+e.detail:''}</span>
+    </div>`).join('');
+}
+function clearLog(){sessionLog=[];renderLog();}
+
+// ── TOAST ─────────────────────────────────────────────────────────────────────
+function toast(title,msg,type){
+  const wrap=document.getElementById('toastWrap');
+  if(!wrap) return;
+  const id='t'+Date.now();
+  const el=document.createElement('div');
+  el.className='toast';el.id=id;
+  const isNew=type==='new'||type==='expired';
+  const ic=isNew?'#a78bfa':'#6ee7b7';
+  const svg=isNew
+    ?`<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4C7.58 4 4 7.58 4 12S7.58 20 12 20C15.73 20 18.84 17.45 19.73 14H17.65C16.83 16.33 14.61 18 12 18C8.69 18 6 15.31 6 12S8.69 6 12 6C13.66 6 15.14 6.69 16.22 7.78L13 11H20V4L17.65 6.35Z" fill="${ic}"/></svg>`
+    :`<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 2C6.48 2 2 6.48 2 12S6.48 22 12 22S22 17.52 22 12S17.52 2 12 2ZM10 17L5 12L6.41 10.59L10 14.17L17.59 6.58L19 8L10 17Z" fill="${ic}"/></svg>`;
+  el.innerHTML=`<div class="toast-ico ${isNew?'':'green'}">${svg}</div><div class="toast-body"><div class="toast-ttl ${isNew?'':'green-t'}">${title}</div><div class="toast-msg">${msg}</div></div><button class="toast-x" onclick="dismissToast('${id}')">×</button>`;
+  wrap.appendChild(el);
+  setTimeout(()=>dismissToast(id),5500);
+}
+function dismissToast(id){const el=document.getElementById(id);if(!el)return;el.classList.add('out');setTimeout(()=>el&&el.remove(),260);}
+
+// ── STATUS BAR ────────────────────────────────────────────────────────────────
+function updateSessBar(type,trigger,detail){
+  const bar=document.getElementById('sessStatus');
+  const det=document.getElementById('sessDetail');
+  if(!bar||!det) return;
+  const map={new:{cls:'reshuffled',label:'↻ New window'},restored:{cls:'restored',label:'✓ Restored'},expired:{cls:'expired',label:'⏱ Expired → new'},stable:{cls:'stable',label:'● Stable'},filtered:{cls:'reshuffled',label:'↻ Filtered'},nav:{cls:'stable',label:'◀▶ Navigated'}};
+  const cfg=map[type]||map.stable;
+  bar.className='fab-status-badge '+cfg.cls;
+  bar.textContent=cfg.label;
+  det.innerHTML=`<strong>${trigger}</strong>${detail?' — '+detail:''}`;
+}
+
+// ── SESSION DEF TOGGLE ────────────────────────────────────────────────────────
+function toggleSessDef(){
+  const body=document.getElementById('sessDefBody');
+  const btn=document.querySelector('.sess-toggle');
+  if(!body) return;
+  const hidden=body.style.display==='none';
+  body.style.display=hidden?'':'none';
+  btn.textContent=hidden?'Hide':'Show';
+}
+function toggleFab(){
+  const panel=document.getElementById('fabPanel');
+  if(panel) panel.classList.toggle('open');
+  if(panel && panel.classList.contains('open')) renderImpressionTable();
+}
+
+function renderImpressionTable(){
+  const el=document.getElementById('impressionTable');
+  if(!el) return;
+  const allFeat=STUDIES.filter(s=>s.featured);
+  const total=allFeat.length;
+  const pageSize=FEAT_PAGE_SIZE;
+  const numWindows=Math.ceil(total/pageSize);
+  const usersPerWindow=Math.round(100/numWindows);
+  const rows=[];
+  for(let i=0;i<total;i+=pageSize){
+    const from=i+1;
+    const to=Math.min(i+pageSize,total);
+    const filled=Math.max(1,Math.round(usersPerWindow/5));
+    const empty=10-filled;
+    const bar='█'.repeat(filled)+'░'.repeat(empty);
+    rows.push(`<div style="display:flex;align-items:center;gap:6px">
+      <span style="color:#9ca3af;min-width:68px;flex-shrink:0">Sponsors ${from}–${to}</span>
+      <span style="color:#003CA5;font-family:monospace;letter-spacing:-1px;font-size:9px">${bar}</span>
+      <span style="color:#374151;font-weight:700">~${usersPerWindow} users</span>
+      <span style="color:#9ca3af">see these first</span>
+    </div>`);
+  }
+  el.innerHTML=rows.join('');
+}
+
+// ── FEATURED VISIBILITY TOGGLE ────────────────────────────────────────────────
+function toggleFeatVisible(){
+  featVisible=!featVisible;
+  renderAll();
+  const btn=document.getElementById('featToggleBtn');
+  if(btn){
+    btn.textContent=featVisible?'★ Featured: On':'★ Featured: Off';
+    btn.style.color=featVisible?'#003CA5':'#6b7280';
+    btn.style.borderColor=featVisible?'#93c5fd':'#d1d5db';
+  }
+}
+
+// ── FEATURED SECTION NAVIGATION ───────────────────────────────────────────────
+function featNav(dir) {
+  const allFeat = STUDIES.filter(s => s.featured);
+  const featTotalPages = Math.ceil(allFeat.length / FEAT_PAGE_SIZE);
+  featPage = ((featPage + dir) % featTotalPages + featTotalPages) % featTotalPages;
+  renderAll();
+  pushLog('nav', `Page ${featPage+1} of ${featTotalPages}`, `Showing sponsors ${getPageStart(allFeat.length)+1}–${Math.min(getPageStart(allFeat.length)+FEAT_PAGE_SIZE, allFeat.length)}`);
+}
+
+function getPageStart(total) {
+  // Absolute index = (sessionStart + featPage * PAGE_SIZE) mod total
+  return (sessionStart + featPage * FEAT_PAGE_SIZE) % total;
+}
+
+function getFeaturedPage(allFeat) {
+  const total = allFeat.length;
+  if (total === 0) return [];
+  const start = getPageStart(total);
+  // Slice with wraparound
+  const end = start + FEAT_PAGE_SIZE;
+  if (end <= total) return allFeat.slice(start, end);
+  return [...allFeat.slice(start), ...allFeat.slice(0, end - total)];
+}
+
+// ── DEMO CONTROLS ─────────────────────────────────────────────────────────────
+function forceNewSession(){
+  _lsDel(KEY_START); _lsDel(KEY_TS); _memStart=null; _memTs=null;
+  sessionStart=0; featPage=0;
+  document.getElementById('searchInput').value='';
+  document.getElementById('conditionFilter').value='';
+  document.querySelectorAll('.fp input[type=checkbox]').forEach(x=>x.checked=false);
+  document.querySelectorAll('.fp input[type=radio]').forEach(x=>x.checked=x.value==='all');
+  renderAll();
+}
+function simulateExpiry(){
+  try{const fakeTs=Date.now()-(49*3600000);_lsSet(KEY_TS,String(fakeTs));_memTs=fakeTs;} catch(e){}
+  sessionStart=0; featPage=0;
+  document.getElementById('searchInput').value='';
+  document.getElementById('conditionFilter').value='';
+  document.querySelectorAll('.fp input[type=checkbox]').forEach(x=>x.checked=false);
+  document.querySelectorAll('.fp input[type=radio]').forEach(x=>x.checked=x.value==='all');
+  isFirst=true;
+  renderAll();
+}
+
+function simulateUser(userIndex){
+  // Each user gets a deterministic but different random start
+  // based on their user index — simulates what different visitors see
+  const allFeat=STUDIES.filter(s=>s.featured);
+  const total=allFeat.length;
+  // Spread starts evenly across the pool
+  const start=(userIndex*FEAT_PAGE_SIZE)%total;
+  _lsDel(KEY_START); _lsDel(KEY_TS); _memStart=null; _memTs=null;
+  sessionStart=start;
+  featPage=0;
+  saveSessionStart(start);
+  document.getElementById('searchInput').value='';
+  document.getElementById('conditionFilter').value='';
+  document.querySelectorAll('.fp input[type=checkbox]').forEach(x=>x.checked=false);
+  document.querySelectorAll('.fp input[type=radio]').forEach(x=>x.checked=x.value==='all');
+  pushLog('new',`Simulating User ${String.fromCharCode(65+userIndex)}`,`Start index: ${start} → sponsors ${start+1}–${Math.min(start+FEAT_PAGE_SIZE,total)} shown first`);
+  updateSessBar('new',`User ${String.fromCharCode(65+userIndex)}'s session`,`Sponsors ${start+1}–${Math.min(start+FEAT_PAGE_SIZE,total)} shown first`);
+  toast(`User ${String.fromCharCode(65+userIndex)}'s view`,`This user sees sponsors ${start+1}–${Math.min(start+FEAT_PAGE_SIZE,total)} first`,'new');
+  renderAll();
+}
+
+// ── CARD BUILDERS ─────────────────────────────────────────────────────────────
+const SC   = {'Recruiting':['#dcfce7','#15803d'],'Available':['#dcfce7','#15803d'],'Not yet recruiting':['#fef9c3','#a16207'],'Active not recruiting':['#f3f4f6','#374151'],'Enrolling by invitation':['#dbeafe','#1d4ed8'],'No longer available':['#f3f4f6','#6b7280']};
+const SCLS = {'Recruiting':'br','Available':'bav','Not yet recruiting':'bny','Active not recruiting':'bac','Enrolling by invitation':'be','No longer available':'bac'};
+const TCLS = {'Interventional':'bi','Expanded access':'be','Observational':'bo'};
+function dot(s){const[f1,f2]=SC[s]||['#d1d5db','#374151'];return `<svg width="13" height="13" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="6" fill="${f1}"/><circle cx="10" cy="10" r="3" fill="${f2}"/></svg>`;}
+function typeSVG(t){const c=t==='Expanded access'?'#1d4ed8':t==='Interventional'?'#7c3aed':'#374151';return `<svg width="13" height="13" viewBox="0 0 20 21" fill="none"><path d="M16.46 18C16.46 18.35 16.18 18.63 15.83 18.63H5L9.79 16.95C7.99 16.88 6.34 15.95 5.34 14.46H4.17C3.82 14.46 3.54 14.18 3.54 13.83C3.54 13.49 3.82 13.21 4.17 13.21H8.33C8.68 13.21 8.96 13.49 8.96 13.83C8.96 14.18 8.68 14.46 8.33 14.46H6.95C7.75 15.25 8.85 15.71 10 15.71C12.41 15.71 14.38 13.75 14.38 11.33C14.38 10.02 13.8 8.81 12.79 7.97L10.55 10.22C10.22 10.54 9.88 10.71 9.54 10.71C9.19 10.71 8.85 10.54 8.52 10.22L7.59 9.29C6.93 8.62 6.93 7.92 7.59 7.26L11.57 3.29C12.12 2.74 12.69 2.65 13.25 3.01C13.42 2.68 13.66 2.43 14.3 2.68L15.13 3.51C15.38 3.75 15.38 4.15 15.13 4.39L14.79 4.56C14.94 4.78 15.02 5 15.02 5.23C15.02 5.58 14.85 5.92 14.52 6.24L13.68 7.09C14.92 8.16 15.63 9.69 15.63 11.33C15.63 14.08 13.65 16.37 11.04 16.86V17.38H15.84C16.18 17.38 16.46 17.66 16.46 18Z" fill="${c}"/></svg>`;}
+const FP_BADGE=`<div class="fp-badge"><svg viewBox="0 0 21 20" width="12" height="12" fill="none"><path d="M11.3 2.83L12.92 6.1C13.04 6.34 13.28 6.51 13.55 6.55L17.28 7.09C17.97 7.19 18.24 8.03 17.75 8.51L15.05 11.13C14.85 11.32 14.76 11.6 14.81 11.87L15.42 15.46C15.55 16.18 14.78 16.74 14.13 16.4L10.89 14.7C10.65 14.57 10.36 14.57 10.11 14.7L6.88 16.4C6.22 16.74 5.45 16.18 5.58 15.45L6.2 11.87C6.24 11.6 6.15 11.32 5.96 11.13L3.25 8.51C2.76 8.03 3.03 7.19 3.72 7.09L7.45 6.55C7.72 6.51 7.96 6.34 8.08 6.1L9.7 2.83C10.03 2.17 10.97 2.17 11.3 2.83Z" fill="white"/></svg> Featured</div>`;
+const AI_TAG=`<div class="ai-tag"><svg width="13" height="13" viewBox="0 0 20 21" fill="none"><path d="M8.31 5.15L8.81 6.54C9.37 8.09 10.59 9.31 12.13 9.86L13.53 10.37C13.65 10.41 13.65 10.59 13.53 10.63L12.13 11.14C10.59 11.69 9.37 12.91 8.81 14.46L8.31 15.85C8.26 15.98 8.09 15.98 8.04 15.85L7.54 14.46C6.98 12.91 5.76 11.69 4.22 11.14L2.82 10.63C2.7 10.59 2.7 10.41 2.82 10.37L4.22 9.86C5.76 9.31 6.98 8.09 7.54 6.54L8.04 5.15C8.09 5.02 8.26 5.02 8.31 5.15Z" fill="#71717B"/><path d="M13.58 2.8L13.84 3.5C14.12 4.29 14.74 4.9 15.52 5.19L16.23 5.44C16.29 5.46 16.29 5.55 16.23 5.58L15.52 5.83C14.74 6.11 14.12 6.73 13.84 7.51L13.58 8.22C13.56 8.28 13.47 8.28 13.45 8.22L13.19 7.51C12.91 6.73 12.29 6.11 11.51 5.83L10.81 5.58C10.74 5.55 10.74 5.46 10.81 5.44L11.51 5.19C12.29 4.9 12.91 4.29 13.19 3.5L13.45 2.8C13.47 2.73 13.56 2.73 13.58 2.8Z" fill="#71717B"/></svg> AI-Simplified<svg class="ai-plus" viewBox="0 0 11 11" fill="none"><path d="M5.5 0.5C6.41 0.5 7.14 1.24 7.14 2.14V3.96H8.96C9.81 3.96 10.5 4.65 10.5 5.5C10.5 6.35 9.81 7.04 8.96 7.04H7.14V8.86C7.14 9.76 6.41 10.5 5.5 10.5C4.59 10.5 3.86 9.76 3.86 8.86V7.04H2.04C1.19 7.04 0.5 6.35 0.5 5.5C0.5 4.65 1.19 3.96 2.04 3.96H3.86V2.14C3.86 1.24 4.59 0.5 5.5 0.5Z" fill="#F38A3F" stroke="white" stroke-width="0.5"/></svg></div>`;
+const COND_ICON=`<svg width="13" height="13" viewBox="0 0 20 21" fill="none"><path d="M13.32 3.83C10.83 3.82 10 6.32 10 6.32C10 6.32 9.17 3.82 6.68 3.83C3.35 3.85 2.04 6.96 2.64 10.05C3.62 15.09 10 18 10 18C10 18 16.38 15.09 17.36 10.05C17.96 6.96 16.66 3.85 13.32 3.83Z" fill="#52525C"/></svg>`;
+const AGE_ICON=`<svg width="15" height="15" viewBox="0 0 20 20" fill="none"><path d="M7.51 8.96C5.55 8.96 3.97 7.37 3.97 5.42C3.97 3.46 5.55 1.88 7.51 1.88C9.46 1.88 11.05 3.46 11.05 5.42C11.05 7.37 9.46 8.96 7.51 8.96ZM10.83 18.13H4.17C2.15 18.13 1.04 17.02 1.04 15.02C1.04 12.8 2.3 10.21 5.83 10.21H9.17C12.7 10.21 13.96 12.8 13.96 15.02C13.96 17.02 12.85 18.13 10.83 18.13Z" fill="#525B6C"/></svg>`;
+const MORE_CHV=`<svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M12.72 15.78C12.58 15.92 12.39 16 12.19 16H11.81L6.15 10.64C5.9 10.38 5.9 9.96 6.15 9.7L6.86 9L12 13.67L17.14 9L17.85 9.93C18.1 10.19 18.1 10.61 17.85 10.87L12.72 15.78Z" fill="currentColor"/></svg>`;
+
+function cardHTML(s, isFt) {
+  const sc=SCLS[s.status]||'bac', tc=TCLS[s.type]||'bo';
+  const ageMin=s.minAge===0?'0':s.minAge;
+  const ageMax=s.maxAge===999?'Years and older':`to ${s.maxAge} Years`;
+  const condTags=s.conditions.map(c=>`<div class="ctag">${c}</div>`).join('');
+  return `<div class="card ${isFt?'featured-card':'normal'}">
+    ${isFt?FP_BADGE:''}
+    <div class="badges">
+      <div class="badge ${sc}">${dot(s.status)}${s.status}</div>
+      <div class="badge ${tc}">${typeSVG(s.type)}${s.type}</div>
+    </div>
+    <div class="card-title">${s.title}</div>
+    ${s.desc?`<div class="card-desc">${s.desc}</div>`:''}
+    <div class="age-row">${AGE_ICON}<span class="age-lbl">Age:</span>&nbsp;<span class="age-val">${ageMin} ${ageMax}</span></div>
+    <div class="cond-box">
+      <div class="cond-lbl">${COND_ICON} Conditions:</div>
+      <div class="cond-tags">${condTags}</div>
+    </div>
+    <div class="card-foot">${AI_TAG}<div class="nct">${s.nct}</div></div>
+  </div>`;
+}
+
+// ── FILTER HELPERS ────────────────────────────────────────────────────────────
+function isDefault(q,cq,types,stats,phases,ages){return !q&&!cq&&!types.length&&!stats.length&&!phases.length&&!ages.length;}
+function filterLabel(q,cq,types,stats,phases,ages){
+  if(isDefault(q,cq,types,stats,phases,ages)) return 'Default state';
+  const p=[];
+  if(q) p.push(`Search "${q}"`);
+  if(cq) p.push(`Condition "${cq}"`);
+  if(types.length) p.push(`Type: ${types.join(', ')}`);
+  if(stats.length) p.push(`Status: ${stats.join(', ')}`);
+  if(phases.length) p.push(`Phase: ${phases.join(', ')}`);
+  if(ages.length) p.push(`Age: ${ages.join(', ')}`);
+  return p.join(' · ');
+}
+
+// ── MAIN RENDER ───────────────────────────────────────────────────────────────
+function applyFilters() {
+  const q     =document.getElementById('searchInput').value.trim().toLowerCase();
+  const cq    =document.getElementById('conditionFilter').value.trim().toLowerCase();
+  const types =[...document.querySelectorAll('#sec-type input:checked')].map(x=>x.value);
+  const stats =[...document.querySelectorAll('#sec-status input:checked')].map(x=>x.value);
+  const phases=[...document.querySelectorAll('#sec-phase input:checked')].map(x=>x.value);
+  const ages  =[...document.querySelectorAll('#sec-age input:checked')].map(x=>x.value);
+
+  const defState=isDefault(q,cq,types,stats,phases,ages);
+  const mQ =s=>!q    ||s.kw.some(k=>k.includes(q))||s.title.toLowerCase().includes(q)||s.conditions.some(c=>c.toLowerCase().includes(q))||s.nct.toLowerCase().includes(q);
+  const mC =s=>!cq   ||s.conditions.some(c=>c.toLowerCase().includes(cq))||s.kw.some(k=>k.includes(cq));
+  const mT =s=>!types.length  ||types.includes(s.type);
+  const mSt=s=>!stats.length  ||stats.includes(s.status);
+  const mPh=s=>!phases.length ||phases.includes(s.phase);
+  const mA =s=>{if(!ages.length)return true;return ages.some(a=>a==='0-17'?s.minAge<=17:a==='18-64'?s.minAge<=64&&s.maxAge>=18:a==='65+'?s.maxAge>=65:true);};
+
+  const newKey=[q,cq,...types,...stats,...phases,...ages].join('|');
+  const changed=newKey!==ctxKey;
+  ctxKey=newKey;
+
+  // ── Initialise session start index ────────────────────────────────────────
+  if(defState && isFirst) {
+    const allFeat=STUDIES.filter(s=>s.featured);
+    const saved=loadSessionStart();
+    if(saved && !saved.expired) {
+      sessionStart=saved.idx;
+      const rem=fmtRemaining(saved.remaining);
+      pushLog('restored','Session restored',`Start index: ${sessionStart} · ${rem}`);
+      updateSessBar('restored','Session restored',rem);
+    } else if(saved && saved.expired) {
+      sessionStart=calcStartIndex(allFeat.length);
+      saveSessionStart(sessionStart);
+      pushLog('expired','48h window expired',`New start index: ${sessionStart}`);
+      updateSessBar('expired','New 48h window',`Sponsors ${sessionStart+1}–${Math.min(sessionStart+FEAT_PAGE_SIZE,allFeat.length)} shown first`);
+      toast('Featured studies rotated',`A new 48h window has started. ${FEAT_PAGE_SIZE} different sponsors are now shown first.`,'expired');
+    } else {
+      sessionStart=calcStartIndex(allFeat.length);
+      saveSessionStart(sessionStart);
+      pushLog('new','New session',`Start index: ${sessionStart} · sponsors ${sessionStart+1}–${Math.min(sessionStart+FEAT_PAGE_SIZE,allFeat.length)} shown first`);
+      updateSessBar('new','New 48h window started',`Sponsors ${sessionStart+1}–${Math.min(sessionStart+FEAT_PAGE_SIZE,allFeat.length)} shown first`);
+    }
+  }
+
+  isFirst=false;
+  renderAll(q,cq,types,stats,phases,ages,defState,changed);
+}
+
+function renderAll(q,cq,types,stats,phases,ages,defState,changed) {
+  // Read current filter state if not passed
+  if(q===undefined) {
+    q     =document.getElementById('searchInput').value.trim().toLowerCase();
+    cq    =document.getElementById('conditionFilter').value.trim().toLowerCase();
+    types =[...document.querySelectorAll('#sec-type input:checked')].map(x=>x.value);
+    stats =[...document.querySelectorAll('#sec-status input:checked')].map(x=>x.value);
+    phases=[...document.querySelectorAll('#sec-phase input:checked')].map(x=>x.value);
+    ages  =[...document.querySelectorAll('#sec-age input:checked')].map(x=>x.value);
+    defState=isDefault(q,cq,types,stats,phases,ages);
+    changed=false;
+  }
+
+  const mQ =s=>!q    ||s.kw.some(k=>k.includes(q))||s.title.toLowerCase().includes(q)||s.conditions.some(c=>c.toLowerCase().includes(q))||s.nct.toLowerCase().includes(q);
+  const mC =s=>!cq   ||s.conditions.some(c=>c.toLowerCase().includes(cq))||s.kw.some(k=>k.includes(cq));
+  const mT =s=>!types.length  ||types.includes(s.type);
+  const mSt=s=>!stats.length  ||stats.includes(s.status);
+  const mPh=s=>!phases.length ||phases.includes(s.phase);
+  const mA =s=>{if(!ages.length)return true;return ages.some(a=>a==='0-17'?s.minAge<=17:a==='18-64'?s.minAge<=64&&s.maxAge>=18:a==='65+'?s.maxAge>=65:true);};
+
+  const allFeat=STUDIES.filter(s=>s.featured);
+  const featPages=Math.ceil(allFeat.length/FEAT_PAGE_SIZE);
+
+  let html='';
+
+  // ── FEATURED SECTION ─────────────────────────────────────────────────────
+  if(featVisible) {
+    if(defState) {
+      // Default: paginated featured section
+      const pageFeat=getFeaturedPage(allFeat);
+      const pageStart=getPageStart(allFeat.length);
+
+      html+=`<div class="res-count-bar">Showing <strong>1</strong> to <strong>10</strong> of <strong>${SIMULATED_TOTAL.toLocaleString()}</strong></div>
+      <div class="feat-section">
+        <div class="feat-cards">
+          ${pageFeat.map(s=>cardHTML(s,true)).join('')}
+        </div>
+      </div>`;
+
+    } else {
+      // Filtered: show all matching featured at top, no pagination
+      const filteredFeat=allFeat.filter(s=>mQ(s)&&mC(s)&&mT(s)&&mSt(s)&&mPh(s)&&mA(s));
+      if(filteredFeat.length>0) {
+        html+=`<div class="feat-section">
+          <div class="feat-cards">
+            ${filteredFeat.map(s=>cardHTML(s,true)).join('')}
+          </div>
+        </div>`;
+      }
+    }
+  }
+
+  // ── ALL STUDIES SECTION ───────────────────────────────────────────────────
+  const allMatched = STUDIES.filter(s=>mQ(s)&&mC(s)&&mT(s)&&mSt(s)&&mPh(s)&&mA(s));
+  const featIds    = new Set(STUDIES.filter(s=>s.featured).map(s=>s.id));
+  const matched    = defState
+    ? allMatched.filter(s=>!featIds.has(s.id))
+    : allMatched;
+
+  const perPage = 10;
+  const studyTotalPages = Math.ceil(SIMULATED_TOTAL / perPage);
+
+  // On page 2+, hide the featured section
+  if(currentPage > 1 && featVisible && defState) {
+    html = ''; // clear featured section html — not shown on page 2+
+  }
+
+  // In filtered state: show count of actual results above cards
+  if(!defState && currentPage === 1) {
+    const filteredTotal = allMatched.length;
+    html += `<div class="res-count-bar">Showing <strong>1</strong> to <strong>${Math.min(perPage, filteredTotal)}</strong> of <strong>${filteredTotal.toLocaleString()}</strong></div>`;
+  }
+
+  // Show real cards on page 1, simulated placeholders on page 2+
+  if(currentPage === 1 && matched.length > 0) {
+    matched.slice(0, 5).forEach(s=>{html+=cardHTML(s,false);});
+  } else if(currentPage === 1) {
+    html+=`<div class="empty">No studies match your filters.<br><small style="margin-top:5px;display:block;color:#9ca3af">Try broadening your search.</small></div>`;
+  } else {
+    // Page 2+ — show count bar then placeholder cards
+    html += `<div class="res-count-bar">Showing <strong>${((currentPage-1)*perPage)+1}</strong> to <strong>${Math.min(currentPage*perPage, SIMULATED_TOTAL)}</strong> of <strong>${SIMULATED_TOTAL.toLocaleString()}</strong></div>`;
+    for(let i=0;i<10;i++){
+      const idx = ((currentPage-1)*perPage + i) % matched.length;
+      const s = matched[idx] || matched[0];
+      if(s) html+=cardHTML(s,false);
+    }
+  }
+
+  const clEl=document.getElementById('cardList');
+  if(clEl) clEl.innerHTML=html;
+
+  // Update pagination
+  const piEl=document.getElementById('pagInfo');
+  if(piEl) piEl.innerHTML=`Showing <strong>${((currentPage-1)*perPage)+1}</strong>–<strong>${Math.min(currentPage*perPage, SIMULATED_TOTAL)}</strong> of <strong>${SIMULATED_TOTAL.toLocaleString()} studies</strong>`;
+
+  // Render pagination buttons
+  const pagBtns=document.getElementById('pagBtns');
+  if(pagBtns){
+    const showPages=[1,2,3];
+    if(studyTotalPages>3) showPages.push(null, studyTotalPages); // null = ellipsis
+    let btns=`<button class="pb" onclick="goPage(${currentPage-1})" ${currentPage===1?'disabled':''}>‹</button>`;
+    let prev=null;
+    showPages.forEach(p=>{
+      if(p===null){
+        btns+=`<span style="padding:0 3px;color:#9ca3af">…</span>`;
+      } else {
+        btns+=`<button class="pb ${p===currentPage?'on':''}" onclick="goPage(${p})">${p}</button>`;
+      }
+      prev=p;
+    });
+    btns+=`<button class="pb" onclick="goPage(${currentPage+1})" ${currentPage===studyTotalPages?'disabled':''}>›</button>`;
+    pagBtns.innerHTML=btns;
+  }
+
+  // Update FAB toggle button
+  const ftBtn=document.getElementById('featToggleBtn');
+  if(ftBtn){ftBtn.textContent=featVisible?'★ Featured: On':'★ Featured: Off';ftBtn.style.color=featVisible?'#003CA5':'#6b7280';ftBtn.style.borderColor=featVisible?'#93c5fd':'#d1d5db';}
+
+  updateClock();
+}
+
+// ── PAGE NAVIGATION ──────────────────────────────────────────────────────────
+function goPage(p) {
+  const studyTotalPages2 = Math.ceil(SIMULATED_TOTAL / 10);
+  if(p < 1 || p > studyTotalPages2) return;
+  currentPage = p;
+  window.scrollTo({top: 0, behavior: 'smooth'});
+  renderAll();
+}
+
+// ── CLEAR ALL ─────────────────────────────────────────────────────────────────
+function clearAll() {
+  document.getElementById('searchInput').value='';
+  document.getElementById('conditionFilter').value='';
+  document.querySelectorAll('.fp input[type=checkbox]').forEach(x=>x.checked=false);
+  document.querySelectorAll('.fp input[type=radio]').forEach(x=>x.checked=x.value==='all');
+  featPage=0;
+  currentPage=1;
+  ctxKey='__cleared__';
+  renderAll();
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+updateClock();
+setInterval(updateClock,60000);
+applyFilters();
+
+</script>
+
+<!-- ── DEV FAB ───────────────────────────────────────────────────────────── -->
+<div class="fab-wrap" id="fabWrap">
+  <div class="fab-panel" id="fabPanel">
+    <div class="fab-panel-hdr">
+      <div class="fab-panel-title">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 2C6.48 2 2 6.48 2 12S6.48 22 12 22S22 17.52 22 12S17.52 2 12 2ZM13 17H11V11H13V17ZM13 9H11V7H13V9Z" fill="white"/></svg>
+        Session logic — 48h TTL
+      </div>
+      <button class="fab-close" onclick="toggleFab()">×</button>
+    </div>
+    <div class="fab-body">
+
+      <!-- Status -->
+      <div class="fab-status">
+        <div class="fab-status-badge stable" id="sessStatus">● Stable</div>
+        <div class="fab-status-detail" id="sessDetail">Waiting for first interaction…</div>
+      </div>
+
+      <!-- Mode tag -->
+      <div class="fab-dbg" id="dbg"></div>
+
+      <!-- Dots -->
+      <div class="fab-dots" id="dotsRow"></div>
+
+      <!-- Cols -->
+      <div class="fab-cols">
+        <div class="fab-col">
+          <div class="fab-col-title" style="color:#0369a1">📌 Default state</div>
+          <ul>
+            <li>First visit → <strong>5 featured studies</strong> randomly selected</li>
+            <li>Saved to <code>localStorage</code> with timestamp</li>
+            <li><strong>Any return within 48h</strong> → exact same selection</li>
+            <li>Refresh, close tab, reopen → <strong>same studies</strong></li>
+            <li>After <strong>48h</strong> → silent fresh selection on next visit</li>
+          </ul>
+        </div>
+        <div class="fab-col">
+          <div class="fab-col-title" style="color:#7c3aed">🔍 Filtered state</div>
+          <ul>
+            <li><strong>All eligible featured shown</strong> — no cap</li>
+            <li>8 matching "GBM" → <strong>show all 8</strong></li>
+            <li>48h session preserved in storage, untouched</li>
+            <li>Clear filters → <strong>same locked selection returns</strong></li>
+          </ul>
+        </div>
+        <div class="fab-col">
+          <div class="fab-col-title" style="color:#b45309">↻ Reset only when</div>
+          <ul>
+            <li>48h TTL elapsed — <strong>silent, on next visit</strong></li>
+            <li>No notice shown, no disruption</li>
+          </ul>
+          <div class="fab-col-title" style="color:#16a34a;margin-top:8px">✓ Session survives</div>
+          <ul>
+            <li>Page refresh · tab close · tab reopen</li>
+            <li>Filter apply · filter clear</li>
+            <li>Pagination · sort · scroll</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="fab-divider"></div>
+
+      <!-- Sponsor impression distribution -->
+      <div style="font-size:10px;font-weight:700;color:#6b7280;margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em">📊 Sponsor visibility per 100 users</div>
+      <div style="background:#f9fafb;border-radius:6px;padding:8px 10px;font-size:10px;color:#374151;line-height:1.8;margin-bottom:8px">
+        <div style="margin-bottom:4px;color:#6b7280">With <strong style="color:#374151">10 sponsors</strong> · <strong style="color:#374151">5 shown per session</strong> · <strong style="color:#374151">rotating every 48h</strong></div>
+        <div style="display:flex;flex-direction:column;gap:2px" id="impressionTable"></div>
+        <div style="margin-top:6px;padding-top:6px;border-top:1px solid #e5e7eb;color:#6b7280">
+          Each sponsor appears as <strong style="color:#374151">first-page</strong> for ~14 users out of 100 (1 in 2 windows = position 1–5).<br>
+          All sponsors receive <strong style="color:#374151">equal first-page exposure</strong> over time via rotating start index.
+        </div>
+      </div>
+
+      <!-- Log -->
+      <div style="font-size:10px;font-weight:700;color:#6b7280;margin-bottom:4px;display:flex;align-items:center;justify-content:space-between">
+        Session event log <button onclick="clearLog()" style="background:none;border:none;cursor:pointer;font-size:10px;color:#9ca3af;padding:0">Clear</button>
+      </div>
+      <div class="fab-log" id="logBody">
+        <div class="fab-log-empty">No events yet — interact with search or filters</div>
+      </div>
+
+      <div class="fab-divider"></div>
+
+      <!-- Controls -->
+      <div class="fab-controls">
+        <span class="fab-ctrl-label">Demo:</span>
+        <button class="fab-btn-ctrl info" onclick="forceNewSession()">↻ New session</button>
+        <button class="fab-btn-ctrl danger" onclick="simulateExpiry()">⏱ Simulate expiry</button>
+        <button class="fab-btn-ctrl" id="featToggleBtn" onclick="toggleFeatVisible()">★ Featured: On</button>
+      </div>
+      <div style="margin-top:8px;font-size:10px;font-weight:700;color:#6b7280;margin-bottom:5px">Simulate different users (each sees a different start):</div>
+      <div class="fab-controls" style="flex-wrap:wrap;gap:5px">
+        <button class="fab-btn-ctrl" onclick="simulateUser(0)">User A</button>
+        <button class="fab-btn-ctrl" onclick="simulateUser(1)">User B</button>
+        <button class="fab-btn-ctrl" onclick="simulateUser(2)">User C</button>
+        <button class="fab-btn-ctrl" onclick="simulateUser(3)">User D</button>
+        <button class="fab-btn-ctrl" onclick="simulateUser(4)">User E</button>
+        <button class="fab-btn-ctrl" onclick="simulateUser(5)">User F</button>
+        <button class="fab-btn-ctrl" onclick="simulateUser(6)">User G</button>
+      </div>
+      <div class="fab-clock" id="sessClock" style="margin-top:6px">—</div>
+    </div>
+  </div>
+
+  <!-- FAB trigger button -->
+  <button class="fab-btn" onclick="toggleFab()" title="Session dev tools">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 2C6.48 2 2 6.48 2 12S6.48 22 12 22S22 17.52 22 12S17.52 2 12 2ZM13 17H11V11H13V17ZM13 9H11V7H13V9Z" fill="white"/></svg>
+  </button>
+</div>
+</body>
+</html>
